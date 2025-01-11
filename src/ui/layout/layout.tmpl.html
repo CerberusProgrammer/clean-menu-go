@@ -1,0 +1,32 @@
+{{define "base"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/base.css">
+    <title>{{template "title" .}}</title>
+</head>
+
+<body>
+    <header>
+        <h1>
+            <a href="/" style="color: whitesmoke;">Snippetbox</a>
+        </h1>
+        {{ template "nav" . }}
+    </header>
+
+    <main>
+        {{template "main" .}}
+    </main>
+
+    <footer>
+        <p>&copy; Snippetbox 2020</p>
+    </footer>
+
+    <script src="/static/js/base.js"></script>
+</body>
+
+</html>
+{{end}}
