@@ -6,17 +6,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <title>{{template "title" .}}</title>
 </head>
 
-<body>
-    <header>
-        {{ template "nav" . }}
-    </header>
+<body class="flex h-screen bg-background">
+    <!-- Sidebar -->
+    <div id="sidebar"
+        class="bg-primary text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out">
+        <a href="#" class="text-white flex items-center space-x-2 px-4">
+            <span class="text-2xl font-extrabold font-pacifico">Logo</span>
+        </a>
+        <nav>
+            <a href="/" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-secondary">Home</a>
+        </nav>
+    </div>
 
-    <main>
-        {{template "main" .}}
-    </main>
+    <!-- Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Navbar -->
+        <header class="flex justify-between items-center bg-surface py-4 px-6">
+            <div class="flex items-center">
+                <button id="sidebarToggle" class="text-primary focus:outline-none md:hidden">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex items-center">
+                {{ template "nav" . }}
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-background">
+            <div class="container mx-auto px-6 py-8">
+                {{template "main" .}}
+            </div>
+        </main>
+    </div>
 
     <script src="/static/js/index.js"></script>
 </body>
