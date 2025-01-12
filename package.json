@@ -1,0 +1,26 @@
+{
+  "name": "clean-menu-go",
+  "version": "1.0.0",
+  "description": "Clean Menu borns with a simple idea: fast attention at a low level for a restaurant, with powerful tools for the owner. The main goal is to provide a simple and clean interface for every employee. The idea is to have a webapp that can be used in a tablet, with a simple interface that can be used by anyone in the restaurant.",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./src/ui/static/css/tailwind.css -o ./src/ui/static/css/index.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cerberusprogrammer/clean-menu-go.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/cerberusprogrammer/clean-menu-go/issues"
+  },
+  "homepage": "https://github.com/cerberusprogrammer/clean-menu-go#readme",
+  "dependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17"
+  }
+}
