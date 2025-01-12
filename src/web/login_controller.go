@@ -35,3 +35,31 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func Register(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/register" {
+		http.NotFound(w, r)
+		return
+	}
+
+	files := []string{
+		filepath.Join("src", "ui", "pages", "register.tmpl.html"),
+		filepath.Join("src", "ui", "layouts", "focus.tmpl.html"),
+	}
+
+	ts, err := template.ParseFiles(files...)
+
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load template")
+		return
+	}
+
+	err = ts.ExecuteTemplate(w, "base", nil)
+
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to render template")
+		return
+	}
+}
