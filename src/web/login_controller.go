@@ -15,9 +15,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	files := []string{
-		filepath.Join("src", "ui", "pages", "home.tmpl.html"),
-		filepath.Join("src", "ui", "layouts", "layout.tmpl.html"),
-		filepath.Join("src", "ui", "components", "nav.component.html"),
+		filepath.Join("src", "ui", "pages", "login.tmpl.html"),
+		filepath.Join("src", "ui", "layouts", "focus.tmpl.html"),
 	}
 
 	ts, err := template.ParseFiles(files...)
