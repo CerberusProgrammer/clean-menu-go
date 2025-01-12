@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-func Home(w http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
