@@ -5,7 +5,18 @@ module.exports = {
     './src/ui/**/*.tmpl',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: '#2980b9',
+        secondary: '#ffa500',
+        background: '#ffffff',
+        surface: '#eeeeee',
+      },
+    },
+    fontFamily: {
+      sans: ['Josefin Sans', 'sans-serif'],
+      pacifico: ['Pacifico', 'cursive'],
+    },
   },
   plugins: [],
 }
