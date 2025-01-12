@@ -1,0 +1,26 @@
+{{define "base"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <title>Clean Menu</title>
+</head>
+
+<body class="flex items-center justify-center h-screen bg-background">
+    <main class="w-full max-w-md p-8 space-y-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-primary font-pacifico animate-fade-in">Clean</h2>
+            <h2 class="text-4xl font-extrabold text-secondary font-pacifico animate-fade-in">Menu</h2>
+        </div>
+        {{template "content" .}}
+    </main>
+    <script src="/static/js/index.js"></script>
+</body>
+
+</html>
+{{end}}
