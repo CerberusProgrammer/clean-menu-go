@@ -15,6 +15,7 @@ func main() {
 
 	mux.Handle("/static/", http.StripPrefix("/static", fileserver))
 	mux.HandleFunc("/", web.Login)
+	mux.HandleFunc("/home", web.Home)
 	mux.HandleFunc("/register", web.Register)
 
 	fmt.Println("Server is running on port 8080")
