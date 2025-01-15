@@ -24,9 +24,9 @@
     </div>
 
     <!-- Content -->
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="flex-1 flex flex-col">
         <!-- Navbar -->
-        <header class="flex justify-between items-center bg-surface py-4 px-6">
+        <header class="flex justify-between items-center bg-surface py-4 px-6 w-full">
             <div class="flex items-center">
                 <button id="sidebarToggle" class="text-primary focus:outline-none md:hidden">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -36,13 +36,13 @@
                     </svg>
                 </button>
             </div>
-            <div class="flex items-center">
+            <div class="flex items-center w-full md:w-3/4">
                 {{ template "nav" . }}
             </div>
         </header>
 
         <!-- Main Content -->
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-background">
+        <main class=" overflow-x-hidden overflow-y-auto bg-background">
             <div class="container mx-auto px-6 py-8">
                 {{template "main" .}}
             </div>
