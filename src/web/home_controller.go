@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+
+	"sazardev.clean-menu-go/src/auth"
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +30,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", nil)
+	err = ts.ExecuteTemplate(w, "base", auth.GetCurrentUser())
 
 	if err != nil {
 		log.Println(err.Error())
