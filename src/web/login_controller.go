@@ -17,12 +17,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var errorMessage string
+	var errorMessage, email, password string
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
-		email := r.FormValue("email")
-		password := r.FormValue("password")
+		email = r.FormValue("email")
+		password = r.FormValue("password")
 
 		for _, user := range models.Users {
 			if user.Email == email && user.Password == password {
@@ -50,8 +50,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	data := struct {
 		ErrorMessage string
+		Email        string
+		Password     string
 	}{
 		ErrorMessage: errorMessage,
+		Email:        email,
+		Password:     password,
 	}
 
 	err = ts.ExecuteTemplate(w, "base", data)
