@@ -52,6 +52,11 @@ func CreateMenu(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		fmt.Println(r.FormValue("name"))
+		fmt.Println(r.FormValue("price"))
+		fmt.Println(r.FormValue("recipe"))
+		fmt.Println(r.FormValue("categories"))
+
 		price, err := strconv.ParseFloat(r.FormValue("price"), 64)
 		if err != nil {
 			log.Println(err.Error())
