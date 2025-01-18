@@ -8,4 +8,7 @@ type User struct {
 	LastName string `json:"lastName"`
 	Email    string `json:"email"`
 	Phone    string `json:"phone"`
+	Role     string `json:"role"`
 }
+
+var Users []User
