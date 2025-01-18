@@ -33,7 +33,7 @@
                     onclick="removeCategory(this)">{{.}}</span>
                 {{end}}
             </div>
-            <input type="hidden" name="categories" id="categories" value="{{join .Categories " ,"}}">
+            <input type="hidden" name="categories" id="categories" value="{{range .Categories}}{{.}},{{end}}">
         </div>
         <div>
             <button type="submit"
