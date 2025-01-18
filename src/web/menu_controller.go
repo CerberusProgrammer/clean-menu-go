@@ -24,11 +24,7 @@ func ListMenus(w http.ResponseWriter, r *http.Request) {
 		filepath.Join("src", "ui", "components", "nav.component.html"),
 	}
 
-	funcMap := template.FuncMap{
-		"join": joinStrings,
-	}
-
-	ts, err := template.New("menus.tmpl.html").Funcs(funcMap).ParseFiles(files...)
+	ts, err := template.ParseFiles(files...)
 	if err != nil {
 		log.Println(err.Error())
 		fmt.Fprintf(w, "Unable to load template")
@@ -45,43 +41,50 @@ func ListMenus(w http.ResponseWriter, r *http.Request) {
 
 func CreateMenu(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		err := r.ParseForm()
+		err := r.ParseMultipartForm(10 << 20)
 		if err != nil {
 			log.Println(err.Error())
 			http.Error(w, "Unable to parse form", http.StatusBadRequest)
 			return
 		}
 
-		fmt.Println("Name: ", r.FormValue("name"))
-		fmt.Println("Price: ", r.FormValue("price"))
-		fmt.Println("Recipe: ", r.FormValue("recipe"))
-		fmt.Println("Categories: ", r.FormValue("categories"))
+		name := r.FormValue("name")
+		priceStr := r.FormValue("price")
+		recipe := r.FormValue("recipe")
+		categoriesStr := r.FormValue("categories")
 
-		price, err := strconv.ParseFloat(r.FormValue("price"), 64)
+		fmt.Println("Name: ", name)
+		fmt.Println("Price: ", priceStr)
+		fmt.Println("Recipe: ", recipe)
+		fmt.Println("Categories: ", categoriesStr)
+
+		if name == "" || priceStr == "" || recipe == "" || categoriesStr == "" {
+			http.Error(w, "All fields are required", http.StatusBadRequest)
+			return
+		}
+
+		price, err := strconv.ParseFloat(priceStr, 64)
 		if err != nil {
 			log.Println(err.Error())
 			http.Error(w, "Invalid price", http.StatusBadRequest)
 			return
 		}
 
-		categories := strings.Split(r.FormValue("categories"), ",")
+		categories := strings.Split(categoriesStr, ",")
 		menu := models.Menu{
 			ID:         len(models.Menus) + 1,
-			Name:       r.FormValue("name"),
+			Name:       name,
 			Price:      price,
-			Recipe:     r.FormValue("recipe"),
+			Recipe:     recipe,
 			Categories: categories,
 		}
 
-		// Handle file upload
 		file, handler, err := r.FormFile("image")
 		if err == nil {
 			defer file.Close()
-			// Create the uploads directory if it doesn't exist
 			if _, err := os.Stat("uploads"); os.IsNotExist(err) {
 				os.Mkdir("uploads", os.ModePerm)
 			}
-			// Save the file
 			filePath := filepath.Join("uploads", handler.Filename)
 			dst, err := os.Create(filePath)
 			if err != nil {
