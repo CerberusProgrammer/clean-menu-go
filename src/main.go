@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"sazardev.clean-menu-go/src/auth"
 	"sazardev.clean-menu-go/src/web"
 )
 
@@ -15,8 +16,8 @@ func main() {
 
 	mux.Handle("/static/", http.StripPrefix("/static", fileserver))
 	mux.HandleFunc("/", web.Login)
-	mux.HandleFunc("/home", web.Home)
-	mux.HandleFunc("/register", web.Register)
+	mux.Handle("/home", auth.AuthMiddleware(http.HandlerFunc(web.Home)))
+	mux.Handle("/register", http.HandlerFunc(web.Register))
 
 	fmt.Println("Server is running on port 8080")
 	fmt.Println("http://localhost:8080")
