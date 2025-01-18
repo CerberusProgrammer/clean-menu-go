@@ -6,6 +6,9 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+
+	"sazardev.clean-menu-go/src/auth"
+	"sazardev.clean-menu-go/src/models"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +42,21 @@ func Login(w http.ResponseWriter, r *http.Request) {
 func Register(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/register" {
 		http.NotFound(w, r)
+		return
+	}
+
+	if r.Method == http.MethodPost {
+		r.ParseForm()
+		user := models.User{
+			ID:       len(models.Users) + 1,
+			Username: r.FormValue("email"),
+			Password: r.FormValue("password"),
+			Role:     "administrator",
+		}
+		models.Users = append(models.Users, user)
+
+		auth.SetCurrentUser(user)
+		http.Redirect(w, r, "/home", http.StatusSeeOther)
 		return
 	}
 
