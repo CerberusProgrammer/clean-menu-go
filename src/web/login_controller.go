@@ -17,6 +17,23 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.Method == http.MethodPost {
+		r.ParseForm()
+		email := r.FormValue("email")
+		password := r.FormValue("password")
+
+		for _, user := range models.Users {
+			if user.Email == email && user.Password == password {
+				auth.SetCurrentUser(user)
+				http.Redirect(w, r, "/home", http.StatusSeeOther)
+				return
+			}
+		}
+
+		fmt.Fprintf(w, "Invalid email or password")
+		return
+	}
+
 	files := []string{
 		filepath.Join("src", "ui", "pages", "login.tmpl.html"),
 		filepath.Join("src", "ui", "layouts", "focus.tmpl.html"),
@@ -49,7 +66,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		user := models.User{
 			ID:       len(models.Users) + 1,
-			Username: r.FormValue("email"),
+			Email:    r.FormValue("email"),
 			Password: r.FormValue("password"),
 			Role:     "administrator",
 		}
