@@ -17,6 +17,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var errorMessage string
+
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		email := r.FormValue("email")
@@ -30,8 +32,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		fmt.Fprintf(w, "Invalid email or password")
-		return
+		errorMessage = "Invalid email or password"
 	}
 
 	files := []string{
@@ -47,7 +48,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", nil)
+	data := struct {
+		ErrorMessage string
+	}{
+		ErrorMessage: errorMessage,
+	}
+
+	err = ts.ExecuteTemplate(w, "base", data)
 
 	if err != nil {
 		log.Println(err.Error())
