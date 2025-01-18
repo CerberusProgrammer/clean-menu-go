@@ -19,5 +19,6 @@ func main() {
 	mux.HandleFunc("/register", web.Register)
 
 	fmt.Println("Server is running on port 8080")
+	fmt.Println("http://localhost:8080")
 	http.ListenAndServe(":8080", mux)
 }
