@@ -79,7 +79,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			ID:       len(models.Users) + 1,
 			Email:    r.FormValue("email"),
 			Password: r.FormValue("password"),
-			Role:     "administrator",
+			Role:     models.ADMINISTRATOR,
 		}
 		models.Users = append(models.Users, user)
 
