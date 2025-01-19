@@ -1,0 +1,42 @@
+{{define "title"}} Users {{end}}
+{{define "main"}}
+<div class="container mx-auto px-6 py-8">
+    <h1 class="text-3xl font-bold mb-6">Users</h1>
+    <a href="/users/create"
+        class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Create
+        User</a>
+
+    <div class="mt-6">
+        <table class="min-w-full bg-white whitespace-nowrap">
+            <thead>
+                <tr>
+                    <th class="py-2">ID</th>
+                    <th class="py-2">Username</th>
+                    <th class="py-2">Name</th>
+                    <th class="py-2">Email</th>
+                    <th class="py-2">Phone</th>
+                    <th class="py-2">Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .}}
+                <tr>
+                    <td class="py-2">{{.ID}}</td>
+                    <td class="py-2">{{.Username}}</td>
+                    <td class="py-2">{{.Name}}</td>
+                    <td class="py-2">{{.Email}}</td>
+                    <td class="py-2">{{.Phone}}</td>
+                    <td class="py-2">{{.Role}}</td>
+                    <td class="flex py-2 space-x-3">
+                        <a href="/users/edit?id={{.ID}}"
+                            class="text-primary hover:text-secondary hover:bg-secondary/20 rounded-full px-2 pt-[3px] transition duration-300 ease-in-out">Edit</a>
+                        <a href="/users/delete?id={{.ID}}"
+                            class="text-red-500 hover:text-red-700 transition duration-300 hover:bg-red-700/20 rounded-full px-2 pt-[3px] ease-in-out">Delete</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}

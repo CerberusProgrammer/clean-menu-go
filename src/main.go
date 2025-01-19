@@ -25,6 +25,9 @@ func main() {
 	mux.Handle("/menus/edit", auth.AuthMiddleware(http.HandlerFunc(web.EditMenu)))
 	mux.Handle("/menus/delete", auth.AuthMiddleware(http.HandlerFunc(web.DeleteMenu)))
 
+	// User routes
+	mux.Handle("/users", auth.AuthMiddleware(http.HandlerFunc(web.ListUsers)))
+
 	fmt.Println("Server is running on port 8080")
 	fmt.Println("http://localhost:8080")
 	http.ListenAndServe(":8080", mux)
