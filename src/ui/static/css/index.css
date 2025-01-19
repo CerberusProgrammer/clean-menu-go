@@ -757,6 +757,14 @@ video {
   justify-content: space-between;
 }
 
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
 .-space-y-px > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(-1px * calc(1 - var(--tw-space-y-reverse)));
@@ -793,12 +801,22 @@ video {
   margin-bottom: calc(2rem * var(--tw-space-y-reverse));
 }
 
+.space-x-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.75rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.75rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
 .overflow-y-auto {
   overflow-y: auto;
 }
 
 .overflow-x-hidden {
   overflow-x: hidden;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap;
 }
 
 .rounded {
@@ -883,6 +901,10 @@ video {
   padding: 2rem;
 }
 
+.p-2 {
+  padding: 0.5rem;
+}
+
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -936,6 +958,18 @@ video {
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
+}
+
+.pt-1 {
+  padding-top: 0.25rem;
+}
+
+.pt-\[2px\] {
+  padding-top: 2px;
+}
+
+.pt-\[3px\] {
+  padding-top: 3px;
 }
 
 .text-center {
@@ -1072,6 +1106,22 @@ video {
 .hover\:bg-secondary:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 165 0 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-secondary\/10:hover {
+  background-color: rgb(255 165 0 / 0.1);
+}
+
+.hover\:bg-secondary\/30:hover {
+  background-color: rgb(255 165 0 / 0.3);
+}
+
+.hover\:bg-secondary\/20:hover {
+  background-color: rgb(255 165 0 / 0.2);
+}
+
+.hover\:bg-red-700\/20:hover {
+  background-color: rgb(185 28 28 / 0.2);
 }
 
 .hover\:text-red-700:hover {
