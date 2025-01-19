@@ -31,3 +31,47 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func CreateUser(w http.ResponseWriter, r *http.Request) {
+	files := []string{
+		filepath.Join("src", "ui", "pages", "create_user.tmpl.html"),
+		filepath.Join("src", "ui", "layouts", "layout.tmpl.html"),
+		filepath.Join("src", "ui", "components", "nav.component.html"),
+	}
+
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load template")
+		return
+	}
+
+	err = ts.ExecuteTemplate(w, "base", nil)
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to render template")
+		return
+	}
+}
+
+func EditUser(w http.ResponseWriter, r *http.Request) {
+	files := []string{
+		filepath.Join("src", "ui", "pages", "edit_user.tmpl.html"),
+		filepath.Join("src", "ui", "layouts", "layout.tmpl.html"),
+		filepath.Join("src", "ui", "components", "nav.component.html"),
+	}
+
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load template")
+		return
+	}
+
+	err = ts.ExecuteTemplate(w, "base", nil)
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to render template")
+		return
+	}
+}
