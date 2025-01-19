@@ -53,11 +53,6 @@ func CreateMenu(w http.ResponseWriter, r *http.Request) {
 		recipe := r.FormValue("recipe")
 		categoriesStr := r.FormValue("categories")
 
-		fmt.Println("Name: ", name)
-		fmt.Println("Price: ", priceStr)
-		fmt.Println("Recipe: ", recipe)
-		fmt.Println("Categories: ", categoriesStr)
-
 		if name == "" || priceStr == "" || recipe == "" || categoriesStr == "" {
 			http.Error(w, "All fields are required", http.StatusBadRequest)
 			return
