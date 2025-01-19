@@ -11,4 +11,10 @@ type User struct {
 	Role     string `json:"role"`
 }
 
+const (
+	ADMINISTRATOR = "administrator"
+	WAITER        = "waiter"
+	CHEF          = "chef"
+)
+
 var Users []User
