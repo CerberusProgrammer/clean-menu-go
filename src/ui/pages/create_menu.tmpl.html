@@ -52,7 +52,7 @@
         if (categoryInput.value.trim() !== '') {
             const category = categoryInput.value.trim();
             const categoryElement = document.createElement('span');
-            categoryElement.className = 'bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm';
+            categoryElement.className = 'bg-gray-200 text-gray-700 px-4 py-1 rounded-full text-sm';
             categoryElement.innerText = category;
             categoryElement.onclick = function () {
                 categoriesList.removeChild(categoryElement);
