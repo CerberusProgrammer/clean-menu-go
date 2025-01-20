@@ -9,6 +9,7 @@
         <table class="min-w-full bg-white whitespace-nowrap">
             <thead>
                 <tr>
+                    <th class="py-2">Image</th>
                     <th class="py-2">Name</th>
                     <th class="py-2">Price</th>
                     <th class="py-2">Categories</th>
@@ -18,9 +19,15 @@
             <tbody>
                 {{range .}}
                 <tr>
+                    <td class="py-2">
+                        {{if .Image}}
+                        <img src="/static/{{.Image}}" alt="{{.Name}}" class="h-16 w-16 object-cover rounded-full">
+                        {{else}}
+                        <span class="text-gray-500">No Image</span>
+                        {{end}}
+                    </td>
                     <td class="py-2">{{.Name}}</td>
                     <td class="py-2">{{.Price}}</td>
-                    {{if .Categories}}
                     <td class="py-2">
                         <div class="flex flex-wrap space-x-2">
                             {{range .Categories}}
@@ -30,7 +37,6 @@
                             {{end}}
                         </div>
                     </td>
-                    {{end}}
                     <td class="flex py-2 space-x-3">
                         <a href="/menus/edit?id={{.ID}}"
                             class="text-primary hover:text-secondary hover:bg-secondary/20 rounded-full px-2 pt-[3px] transition duration-300 ease-in-out">Edit</a>
