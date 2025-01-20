@@ -31,6 +31,9 @@ func main() {
 	mux.Handle("/users/edit", auth.AuthMiddleware(http.HandlerFunc(web.EditUser)))
 	mux.Handle("/users/delete", auth.AuthMiddleware(http.HandlerFunc(web.DeleteUser)))
 
+	// Logout route
+	mux.HandleFunc("/logout", web.Logout)
+
 	fmt.Println("Server is running on port 8080")
 	fmt.Println("http://localhost:8080")
 	http.ListenAndServe(":8080", mux)
