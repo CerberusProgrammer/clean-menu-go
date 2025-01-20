@@ -14,12 +14,40 @@
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
         </div>
         <div>
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea name="description" id="description" required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"></textarea>
+        </div>
+        <div>
             <label for="recipe" class="block text-sm font-medium text-gray-700">Recipe</label>
             <textarea name="recipe" id="recipe"
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"></textarea>
         </div>
         <div>
-            <label for="category" class="block text-sm font-medium text-gray-700">Categories</label>
+            <label for="availability" class="block text-sm font-medium text-gray-700">Availability</label>
+            <input type="checkbox" name="availability" id="availability"
+                class="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+        </div>
+        <div>
+            <label for="estimated_time" class="block text-sm font-medium text-gray-700">Estimated Time (minutes)</label>
+            <input type="number" name="estimated_time" id="estimated_time"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+        </div>
+        <div>
+            <label for="ingredients" class="block text-sm font-medium text-gray-700">Ingredients</label>
+            <div class="flex space-x-2">
+                <input type="text" id="ingredient-input"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                <button type="button" onclick="addIngredient()"
+                    class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Add</button>
+            </div>
+            <div id="ingredients-list" class="mt-2 flex flex-wrap space-x-2">
+                <!-- Ingredients will be added here dynamically -->
+            </div>
+            <input type="hidden" name="ingredients" id="ingredients">
+        </div>
+        <div>
+            <label for="categories" class="block text-sm font-medium text-gray-700">Categories</label>
             <div class="flex space-x-2">
                 <input type="text" id="category-input"
                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
@@ -44,6 +72,36 @@
 </div>
 
 <script>
+    function addIngredient() {
+        const ingredientInput = document.getElementById('ingredient-input');
+        const ingredientsList = document.getElementById('ingredients-list');
+        const ingredientsField = document.getElementById('ingredients');
+
+        if (ingredientInput.value.trim() !== '') {
+            const ingredient = ingredientInput.value.trim();
+            const ingredientElement = document.createElement('span');
+            ingredientElement.className = 'bg-gray-200 text-gray-700 px-4 py-1 rounded-full text-sm';
+            ingredientElement.innerText = ingredient;
+            ingredientElement.onclick = function () {
+                ingredientsList.removeChild(ingredientElement);
+                updateIngredientsField();
+            };
+            ingredientsList.appendChild(ingredientElement);
+            updateIngredientsField();
+            ingredientInput.value = '';
+        }
+    }
+
+    function updateIngredientsField() {
+        const ingredientsList = document.getElementById('ingredients-list');
+        const ingredientsField = document.getElementById('ingredients');
+        const ingredients = [];
+        ingredientsList.childNodes.forEach(function (ingredientElement) {
+            ingredients.push(ingredientElement.innerText);
+        });
+        ingredientsField.value = ingredients.join(',');
+    }
+
     function addCategory() {
         const categoryInput = document.getElementById('category-input');
         const categoriesList = document.getElementById('categories-list');
