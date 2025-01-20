@@ -8,16 +8,22 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
+	"time"
 
+	"sazardev.clean-menu-go/src/auth"
 	"sazardev.clean-menu-go/src/models"
 )
 
-func joinStrings(sep string, elements []string) string {
-	return strings.Join(elements, sep)
-}
-
 func ListMenus(w http.ResponseWriter, r *http.Request) {
+	currentUser := auth.GetCurrentUser()
+	data := struct {
+		CurrentUser models.User
+		Menus       []models.Menu
+	}{
+		CurrentUser: currentUser,
+		Menus:       models.Menus,
+	}
+
 	files := []string{
 		filepath.Join("src", "ui", "pages", "menus.tmpl.html"),
 		filepath.Join("src", "ui", "layouts", "layout.tmpl.html"),
@@ -31,7 +37,7 @@ func ListMenus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", models.Menus)
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Println(err.Error())
 		fmt.Fprintf(w, "Unable to render template")
@@ -40,6 +46,7 @@ func ListMenus(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreateMenu(w http.ResponseWriter, r *http.Request) {
+	currentUser := auth.GetCurrentUser()
 	if r.Method == http.MethodPost {
 		err := r.ParseMultipartForm(10 << 20)
 		if err != nil {
@@ -49,29 +56,27 @@ func CreateMenu(w http.ResponseWriter, r *http.Request) {
 		}
 
 		name := r.FormValue("name")
-		priceStr := r.FormValue("price")
-		recipe := r.FormValue("recipe")
-		categoriesStr := r.FormValue("categories")
-
-		if name == "" || priceStr == "" || recipe == "" || categoriesStr == "" {
-			http.Error(w, "All fields are required", http.StatusBadRequest)
-			return
-		}
-
-		price, err := strconv.ParseFloat(priceStr, 64)
+		price, err := strconv.ParseFloat(r.FormValue("price"), 64)
 		if err != nil {
 			log.Println(err.Error())
 			http.Error(w, "Invalid price", http.StatusBadRequest)
 			return
 		}
+		description := r.FormValue("description")
 
-		categories := strings.Split(categoriesStr, ",")
 		menu := models.Menu{
-			ID:         len(models.Menus) + 1,
-			Name:       name,
-			Price:      price,
-			Recipe:     recipe,
-			Categories: categories,
+			ID:            len(models.Menus) + 1,
+			Name:          name,
+			Price:         price,
+			Description:   description,
+			Recipe:        "",
+			Availability:  false,
+			EstimatedTime: 0,
+			Ingredients:   []string{},
+			Categories:    []string{},
+			CreatedBy:     currentUser,
+			CreatedAt:     time.Now(),
+			UpdatedAt:     time.Now(),
 		}
 
 		file, handler, err := r.FormFile("image")
@@ -108,11 +113,7 @@ func CreateMenu(w http.ResponseWriter, r *http.Request) {
 		filepath.Join("src", "ui", "components", "nav.component.html"),
 	}
 
-	funcMap := template.FuncMap{
-		"join": joinStrings,
-	}
-
-	ts, err := template.New("create_menu.tmpl.html").Funcs(funcMap).ParseFiles(files...)
+	ts, err := template.ParseFiles(files...)
 	if err != nil {
 		log.Println(err.Error())
 		fmt.Fprintf(w, "Unable to load template")
@@ -143,20 +144,23 @@ func EditMenu(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		name := r.FormValue("name")
 		price, err := strconv.ParseFloat(r.FormValue("price"), 64)
 		if err != nil {
 			log.Println(err.Error())
 			http.Error(w, "Invalid price", http.StatusBadRequest)
 			return
 		}
+		description := r.FormValue("description")
 
-		categories := strings.Split(r.FormValue("categories"), ",")
 		for i, menu := range models.Menus {
 			if menu.ID == id {
-				models.Menus[i].Name = r.FormValue("name")
+				models.Menus[i].Name = name
 				models.Menus[i].Price = price
+				models.Menus[i].Description = description
 				models.Menus[i].Recipe = r.FormValue("recipe")
-				models.Menus[i].Categories = categories
+				models.Menus[i].Availability = r.FormValue("availability") == "on"
+				models.Menus[i].UpdatedAt = time.Now()
 
 				file, handler, err := r.FormFile("image")
 				if err == nil {
@@ -208,11 +212,7 @@ func EditMenu(w http.ResponseWriter, r *http.Request) {
 		filepath.Join("src", "ui", "components", "nav.component.html"),
 	}
 
-	funcMap := template.FuncMap{
-		"join": joinStrings,
-	}
-
-	ts, err := template.New("edit_menu.tmpl.html").Funcs(funcMap).ParseFiles(files...)
+	ts, err := template.ParseFiles(files...)
 	if err != nil {
 		log.Println(err.Error())
 		fmt.Fprintf(w, "Unable to load template")
@@ -241,5 +241,6 @@ func DeleteMenu(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
+
 	http.Redirect(w, r, "/menus", http.StatusSeeOther)
 }
