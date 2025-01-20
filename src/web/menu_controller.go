@@ -77,10 +77,11 @@ func CreateMenu(w http.ResponseWriter, r *http.Request) {
 		file, handler, err := r.FormFile("image")
 		if err == nil {
 			defer file.Close()
-			if _, err := os.Stat("uploads"); os.IsNotExist(err) {
-				os.Mkdir("uploads", os.ModePerm)
+			uploadDir := filepath.Join("src", "ui", "static", "uploads")
+			if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
+				os.Mkdir(uploadDir, os.ModePerm)
 			}
-			filePath := filepath.Join("uploads", handler.Filename)
+			filePath := filepath.Join(uploadDir, handler.Filename)
 			dst, err := os.Create(filePath)
 			if err != nil {
 				log.Println(err.Error())
@@ -93,7 +94,7 @@ func CreateMenu(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Unable to save file", http.StatusInternalServerError)
 				return
 			}
-			menu.Image = filePath
+			menu.Image = filepath.ToSlash(filepath.Join("uploads", handler.Filename))
 		}
 
 		models.Menus = append(models.Menus, menu)
@@ -128,7 +129,7 @@ func CreateMenu(w http.ResponseWriter, r *http.Request) {
 
 func EditMenu(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		err := r.ParseForm()
+		err := r.ParseMultipartForm(10 << 20)
 		if err != nil {
 			log.Println(err.Error())
 			http.Error(w, "Unable to parse form", http.StatusBadRequest)
@@ -156,6 +157,29 @@ func EditMenu(w http.ResponseWriter, r *http.Request) {
 				models.Menus[i].Price = price
 				models.Menus[i].Recipe = r.FormValue("recipe")
 				models.Menus[i].Categories = categories
+
+				file, handler, err := r.FormFile("image")
+				if err == nil {
+					defer file.Close()
+					uploadDir := filepath.Join("src", "ui", "static", "uploads")
+					if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
+						os.Mkdir(uploadDir, os.ModePerm)
+					}
+					filePath := filepath.Join(uploadDir, handler.Filename)
+					dst, err := os.Create(filePath)
+					if err != nil {
+						log.Println(err.Error())
+						http.Error(w, "Unable to save file", http.StatusInternalServerError)
+						return
+					}
+					defer dst.Close()
+					if _, err := dst.ReadFrom(file); err != nil {
+						log.Println(err.Error())
+						http.Error(w, "Unable to save file", http.StatusInternalServerError)
+						return
+					}
+					models.Menus[i].Image = filepath.ToSlash(filepath.Join("uploads", handler.Filename))
+				}
 				break
 			}
 		}
