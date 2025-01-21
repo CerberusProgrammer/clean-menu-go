@@ -63,6 +63,7 @@ func CreateMenu(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		description := r.FormValue("description")
+		categories := r.Form["categories"]
 
 		menu := models.Menu{
 			ID:            len(models.Menus) + 1,
@@ -73,7 +74,7 @@ func CreateMenu(w http.ResponseWriter, r *http.Request) {
 			Availability:  false,
 			EstimatedTime: 0,
 			Ingredients:   []string{},
-			Categories:    []string{},
+			Categories:    categories,
 			CreatedBy:     currentUser,
 			CreatedAt:     time.Now(),
 			UpdatedAt:     time.Now(),
@@ -152,6 +153,7 @@ func EditMenu(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		description := r.FormValue("description")
+		categories := r.Form["categories"]
 
 		for i, menu := range models.Menus {
 			if menu.ID == id {
@@ -160,6 +162,7 @@ func EditMenu(w http.ResponseWriter, r *http.Request) {
 				models.Menus[i].Description = description
 				models.Menus[i].Recipe = r.FormValue("recipe")
 				models.Menus[i].Availability = r.FormValue("availability") == "on"
+				models.Menus[i].Categories = categories
 				models.Menus[i].UpdatedAt = time.Now()
 
 				file, handler, err := r.FormFile("image")
