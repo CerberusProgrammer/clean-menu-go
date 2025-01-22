@@ -63,7 +63,7 @@ func CreateMenu(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		description := r.FormValue("description")
-		categories := r.Form["categories"]
+		categories := r.Form["categories[]"]
 
 		menu := models.Menu{
 			ID:            len(models.Menus) + 1,
