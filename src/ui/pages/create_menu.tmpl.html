@@ -54,10 +54,11 @@
                 <button type="button" onclick="addCategory()"
                     class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Add</button>
             </div>
-            <div id="categories-list" class="mt-2 flex flex-wrap space-x-2">
+            <div id="categories-list" class="mt-2 flex flex-wrap gap-2">
                 <!-- Categories will be added here dynamically -->
             </div>
-            <input type="hidden" name="categories" id="categories">
+            <!-- Change to multiple hidden inputs -->
+            <div id="categories-hidden-inputs"></div>
         </div>
         <div>
             <label for="image" class="block text-sm font-medium text-gray-700">Image</label>
@@ -105,31 +106,39 @@
     function addCategory() {
         const categoryInput = document.getElementById('category-input');
         const categoriesList = document.getElementById('categories-list');
-        const categoriesField = document.getElementById('categories');
+        const category = categoryInput.value.trim();
 
-        if (categoryInput.value.trim() !== '') {
-            const category = categoryInput.value.trim();
+        if (category !== '') {
             const categoryElement = document.createElement('span');
-            categoryElement.className = 'bg-gray-200 text-gray-700 px-4 py-1 rounded-full text-sm';
-            categoryElement.innerText = category;
-            categoryElement.onclick = function () {
-                categoriesList.removeChild(categoryElement);
-                updateCategoriesField();
-            };
+            categoryElement.className = 'bg-gray-200 text-gray-700 px-4 py-1 rounded-full text-sm flex items-center gap-2';
+            categoryElement.innerHTML = `
+                ${category}
+                <button type="button" class="hover:text-red-500" onclick="removeCategory(this)">×</button>
+            `;
             categoriesList.appendChild(categoryElement);
-            updateCategoriesField();
+            updateCategoriesInputs();
             categoryInput.value = '';
         }
     }
 
-    function updateCategoriesField() {
+    function removeCategory(button) {
+        const categoryElement = button.parentElement;
+        categoryElement.remove();
+        updateCategoriesInputs();
+    }
+
+    function updateCategoriesInputs() {
         const categoriesList = document.getElementById('categories-list');
-        const categoriesField = document.getElementById('categories');
-        const categories = [];
-        categoriesList.childNodes.forEach(function (categoryElement) {
-            categories.push(categoryElement.innerText);
+        const hiddenInputsContainer = document.getElementById('categories-hidden-inputs');
+        hiddenInputsContainer.innerHTML = ''; // Clear existing inputs
+
+        categoriesList.querySelectorAll('span').forEach((span) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'categories[]'; // Note the [] for array in form submission
+            input.value = span.textContent.trim().replace('×', '');
+            hiddenInputsContainer.appendChild(input);
         });
-        categoriesField.value = categories.join(',');
     }
 </script>
 {{end}}
