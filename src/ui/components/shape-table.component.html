@@ -1,18 +1,18 @@
 {{define "shape-table"}}
 {{if eq .Shape "circle"}}
 <svg class="mt-2" width="100" height="100">
-    <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3"
-        fill="{{if .IsActive}}{{GetColorStatus .Status}}{{else}}gray{{end}}" />
+    <circle cx="50" cy="50" r="40" fill="{{if .IsActive}}{{GetColorStatus .Status}}{{else}}gray{{end}}" />
+    <text x="50" y="55" text-anchor="middle" fill="white" font-size="20">{{.Capacity}}</text>
 </svg>
 {{else if eq .Shape "square"}}
 <svg class="mt-2" width="100" height="100">
-    <rect x="10" y="10" width="80" height="80" stroke="black" stroke-width="3"
-        fill="{{if .IsActive}}{{GetColorStatus .Status}}{{else}}gray{{end}}" />
+    <rect x="10" y="10" width="80" height="80" fill="{{if .IsActive}}{{GetColorStatus .Status}}{{else}}gray{{end}}" />
+    <text x="50" y="55" text-anchor="middle" fill="white" font-size="20">{{.Capacity}}</text>
 </svg>
 {{else if eq .Shape "rectangle"}}
 <svg class="mt-2" width="100" height="50">
-    <rect x="10" y="10" width="80" height="30" stroke="black" stroke-width="3"
-        fill="{{if .IsActive}}{{GetColorStatus .Status}}{{else}}gray{{end}}" />
+    <rect x="10" y="10" width="80" height="30" fill="{{if .IsActive}}{{GetColorStatus .Status}}{{else}}gray{{end}}" />
+    <text x="50" y="35" text-anchor="middle" fill="white" font-size="20">{{.Capacity}}</text>
 </svg>
 {{end}}
 {{end}}
