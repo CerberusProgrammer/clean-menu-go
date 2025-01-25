@@ -39,6 +39,7 @@ func main() {
 
 	// Table routes
 	mux.Handle("/tables", auth.AuthMiddleware(http.HandlerFunc(web.ListTables)))
+	mux.Handle("/tables/view", auth.AuthMiddleware(http.HandlerFunc(web.ViewTable)))
 	mux.Handle("/tables/create", auth.AuthMiddleware(http.HandlerFunc(web.CreateTable)))
 	mux.Handle("/tables/edit", auth.AuthMiddleware(http.HandlerFunc(web.EditTable)))
 	mux.Handle("/tables/delete", auth.AuthMiddleware(http.HandlerFunc(web.DeleteTable)))
