@@ -31,6 +31,18 @@ func main() {
 	mux.Handle("/users/edit", auth.AuthMiddleware(http.HandlerFunc(web.EditUser)))
 	mux.Handle("/users/delete", auth.AuthMiddleware(http.HandlerFunc(web.DeleteUser)))
 
+	// Floor routes
+	mux.Handle("/floors", auth.AuthMiddleware(http.HandlerFunc(web.ListFloors)))
+	mux.Handle("/floors/create", auth.AuthMiddleware(http.HandlerFunc(web.CreateFloor)))
+	mux.Handle("/floors/edit", auth.AuthMiddleware(http.HandlerFunc(web.EditFloor)))
+	mux.Handle("/floors/delete", auth.AuthMiddleware(http.HandlerFunc(web.DeleteFloor)))
+
+	// Table routes
+	mux.Handle("/tables", auth.AuthMiddleware(http.HandlerFunc(web.ListTables)))
+	mux.Handle("/tables/create", auth.AuthMiddleware(http.HandlerFunc(web.CreateTable)))
+	mux.Handle("/tables/edit", auth.AuthMiddleware(http.HandlerFunc(web.EditTable)))
+	mux.Handle("/tables/delete", auth.AuthMiddleware(http.HandlerFunc(web.DeleteTable)))
+
 	// Logout route
 	mux.HandleFunc("/logout", web.Logout)
 
