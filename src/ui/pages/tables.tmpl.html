@@ -1,0 +1,58 @@
+{{define "title"}} Tables {{end}}
+{{define "main"}}
+<div class="container mx-auto px-6 py-8">
+    <h1 class="text-3xl font-bold mb-6">Tables</h1>
+    <a href="/tables/create"
+        class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Create
+        Table</a>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 sm:row-span-3 gap-2">
+        {{range .Tables}}
+        <div class="shadow-md w-full h-full p-4 bg-white flex items-center flex-col">
+            <p class="text-center">Mesa <span>{{.Number}}</span></p>
+            {{template "shape-table" .}}
+            <p class="text-sm">Capacity: {{.Capacity}}</p>
+            <p class="text-sm capitalize">{{.Status}}</p>
+            <div class="mt-4">
+                <a href="/tables/edit?id={{.ID}}" class="text-primary hover:text-secondary">Edit</a>
+                <a href="/tables/delete?id={{.ID}}" class="text-red-500 hover:text-red-700 ml-4">Delete</a>
+            </div>
+        </div>
+        {{end}}
+    </div>
+
+    <div class="mt-6">
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr>
+                    <th class="py-2">ID</th>
+                    <th class="py-2">Number</th>
+                    <th class="py-2">Name</th>
+                    <th class="py-2">Capacity</th>
+                    <th class="py-2">Shape</th>
+                    <th class="py-2">Is Active</th>
+                    <th class="py-2">Floor ID</th>
+                    <th class="py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Tables}}
+                <tr>
+                    <td class="py-2">{{.ID}}</td>
+                    <td class="py-2">{{.Number}}</td>
+                    <td class="py-2">{{.Name}}</td>
+                    <td class="py-2">{{.Capacity}}</td>
+                    <td class="py-2">{{.Shape}}</td>
+                    <td class="py-2">{{.IsActive}}</td>
+                    <td class="py-2">{{.FloorID}}</td>
+                    <td class="py-2">
+                        <a href="/tables/edit?id={{.ID}}" class="text-primary hover:text-secondary">Edit</a>
+                        <a href="/tables/delete?id={{.ID}}" class="text-red-500 hover:text-red-700">Delete</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}
