@@ -1,0 +1,36 @@
+{{define "title"}} Floors {{end}}
+{{define "main"}}
+<div class="container mx-auto px-6 py-8">
+    <h1 class="text-3xl font-bold mb-6">Floors</h1>
+    <a href="/floors/create"
+        class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Create
+        Floor</a>
+    <div class="mt-6">
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr>
+                    <th class="py-2">ID</th>
+                    <th class="py-2">Name</th>
+                    <th class="py-2">Description</th>
+                    <th class="py-2">Is Active</th>
+                    <th class="py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Floors}}
+                <tr>
+                    <td class="py-2">{{.ID}}</td>
+                    <td class="py-2">{{.Name}}</td>
+                    <td class="py-2">{{.Description}}</td>
+                    <td class="py-2">{{.IsActive}}</td>
+                    <td class="py-2">
+                        <a href="/floors/edit?id={{.ID}}" class="text-primary hover:text-secondary">Edit</a>
+                        <a href="/floors/delete?id={{.ID}}" class="text-red-500 hover:text-red-700">Delete</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}
