@@ -26,3 +26,16 @@ const (
 	TableShapeSquare    = "square"
 	TableShapeRectangle = "rectangle"
 )
+
+func GetColorStatus(status string) string {
+	switch status {
+	case TableStatusAvailable:
+		return "green"
+	case TableStatusOccupied:
+		return "red"
+	case TableStatusReserved:
+		return "orange"
+	default:
+		return "gray"
+	}
+}
