@@ -1,0 +1,27 @@
+{{define "title"}} Create Floor {{end}}
+{{define "main"}}
+<div class="container mx-auto px-6 py-8">
+    <h1 class="text-3xl font-bold mb-6">Create Floor</h1>
+    <form action="/floors/create" method="POST" class="space-y-6">
+        <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+            <input type="text" name="name" id="name" required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+        </div>
+        <div>
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea name="description" id="description" required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"></textarea>
+        </div>
+        <div>
+            <label for="is_active" class="block text-sm font-medium text-gray-700">Is Active</label>
+            <input type="checkbox" name="is_active" id="is_active"
+                class="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+        </div>
+        <div>
+            <button type="submit"
+                class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Create</button>
+        </div>
+    </form>
+</div>
+{{end}}
