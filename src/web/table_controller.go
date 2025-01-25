@@ -44,6 +44,37 @@ func ListTables(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func ViewTable(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
+	var table models.Table
+	for _, t := range models.Tables {
+		if t.ID == id {
+			table = t
+			break
+		}
+	}
+
+	files := []string{
+		filepath.Join("src", "ui", "pages", "view_table.tmpl.html"),
+		filepath.Join("src", "ui", "layouts", "layout.tmpl.html"),
+		filepath.Join("src", "ui", "components", "nav.component.html"),
+	}
+
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load template")
+		return
+	}
+
+	err = ts.ExecuteTemplate(w, "base", table)
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to render template")
+		return
+	}
+}
+
 func CreateTable(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		r.ParseForm()
