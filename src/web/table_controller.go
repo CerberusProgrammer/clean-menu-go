@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"sazardev.clean-menu-go/src/auth"
 	"sazardev.clean-menu-go/src/models"
 )
 
@@ -17,9 +18,11 @@ func ListTables(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Tables []models.Table
+		CurrentUser models.User
+		Tables      []models.Table
 	}{
-		Tables: models.Tables,
+		CurrentUser: auth.GetCurrentUser(),
+		Tables:      models.Tables,
 	}
 
 	files := []string{
@@ -54,6 +57,14 @@ func ViewTable(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	data := struct {
+		CurrentUser models.User
+		Table       models.Table
+	}{
+		CurrentUser: auth.GetCurrentUser(),
+		Table:       table,
+	}
+
 	files := []string{
 		filepath.Join("src", "ui", "pages", "view_table.tmpl.html"),
 		filepath.Join("src", "ui", "layouts", "layout.tmpl.html"),
@@ -67,7 +78,7 @@ func ViewTable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", table)
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Println(err.Error())
 		fmt.Fprintf(w, "Unable to render template")
@@ -93,6 +104,12 @@ func CreateTable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	data := struct {
+		CurrentUser models.User
+	}{
+		CurrentUser: auth.GetCurrentUser(),
+	}
+
 	files := []string{
 		filepath.Join("src", "ui", "pages", "create_table.tmpl.html"),
 		filepath.Join("src", "ui", "layouts", "layout.tmpl.html"),
@@ -106,7 +123,7 @@ func CreateTable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", nil)
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Println(err.Error())
 		fmt.Fprintf(w, "Unable to render template")
@@ -143,6 +160,14 @@ func EditTable(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	data := struct {
+		CurrentUser models.User
+		Table       models.Table
+	}{
+		CurrentUser: auth.GetCurrentUser(),
+		Table:       table,
+	}
+
 	files := []string{
 		filepath.Join("src", "ui", "pages", "edit_table.tmpl.html"),
 		filepath.Join("src", "ui", "layouts", "layout.tmpl.html"),
@@ -156,7 +181,7 @@ func EditTable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", table)
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Println(err.Error())
 		fmt.Fprintf(w, "Unable to render template")

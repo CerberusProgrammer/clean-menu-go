@@ -8,12 +8,19 @@ import (
 	"path/filepath"
 
 	"sazardev.clean-menu-go/src/auth"
+	"sazardev.clean-menu-go/src/models"
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/home" {
 		http.NotFound(w, r)
 		return
+	}
+
+	data := struct {
+		CurrentUser models.User
+	}{
+		CurrentUser: auth.GetCurrentUser(),
 	}
 
 	files := []string{
@@ -30,7 +37,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", auth.GetCurrentUser())
+	err = ts.ExecuteTemplate(w, "base", data)
 
 	if err != nil {
 		log.Println(err.Error())

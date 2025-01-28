@@ -1,6 +1,8 @@
 package auth
 
-import "sazardev.clean-menu-go/src/models"
+import (
+	"sazardev.clean-menu-go/src/models"
+)
 
 var CurrentUser models.User
 

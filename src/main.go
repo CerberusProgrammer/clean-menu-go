@@ -20,29 +20,29 @@ func main() {
 	mux.Handle("/register", http.HandlerFunc(web.Register))
 
 	// Menu routes
-	mux.Handle("/menus", auth.AuthMiddleware(http.HandlerFunc(web.ListMenus)))
-	mux.Handle("/menus/create", auth.AuthMiddleware(http.HandlerFunc(web.CreateMenu)))
-	mux.Handle("/menus/edit", auth.AuthMiddleware(http.HandlerFunc(web.EditMenu)))
-	mux.Handle("/menus/delete", auth.AuthMiddleware(http.HandlerFunc(web.DeleteMenu)))
+	mux.Handle("/menus", auth.AuthMiddleware(auth.RoleMiddleware("administrator", "waiter", "chef")(http.HandlerFunc(web.ListMenus))))
+	mux.Handle("/menus/create", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.CreateMenu))))
+	mux.Handle("/menus/edit", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.EditMenu))))
+	mux.Handle("/menus/delete", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.DeleteMenu))))
 
 	// User routes
-	mux.Handle("/users", auth.AuthMiddleware(http.HandlerFunc(web.ListUsers)))
-	mux.Handle("/users/create", auth.AuthMiddleware(http.HandlerFunc(web.CreateUser)))
-	mux.Handle("/users/edit", auth.AuthMiddleware(http.HandlerFunc(web.EditUser)))
-	mux.Handle("/users/delete", auth.AuthMiddleware(http.HandlerFunc(web.DeleteUser)))
+	mux.Handle("/users", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.ListUsers))))
+	mux.Handle("/users/create", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.CreateUser))))
+	mux.Handle("/users/edit", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.EditUser))))
+	mux.Handle("/users/delete", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.DeleteUser))))
 
 	// Floor routes
-	mux.Handle("/floors", auth.AuthMiddleware(http.HandlerFunc(web.ListFloors)))
-	mux.Handle("/floors/create", auth.AuthMiddleware(http.HandlerFunc(web.CreateFloor)))
-	mux.Handle("/floors/edit", auth.AuthMiddleware(http.HandlerFunc(web.EditFloor)))
-	mux.Handle("/floors/delete", auth.AuthMiddleware(http.HandlerFunc(web.DeleteFloor)))
+	mux.Handle("/floors", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.ListFloors))))
+	mux.Handle("/floors/create", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.CreateFloor))))
+	mux.Handle("/floors/edit", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.EditFloor))))
+	mux.Handle("/floors/delete", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.DeleteFloor))))
 
 	// Table routes
-	mux.Handle("/tables", auth.AuthMiddleware(http.HandlerFunc(web.ListTables)))
-	mux.Handle("/tables/view", auth.AuthMiddleware(http.HandlerFunc(web.ViewTable)))
-	mux.Handle("/tables/create", auth.AuthMiddleware(http.HandlerFunc(web.CreateTable)))
-	mux.Handle("/tables/edit", auth.AuthMiddleware(http.HandlerFunc(web.EditTable)))
-	mux.Handle("/tables/delete", auth.AuthMiddleware(http.HandlerFunc(web.DeleteTable)))
+	mux.Handle("/tables", auth.AuthMiddleware(auth.RoleMiddleware("administrator", "waiter")(http.HandlerFunc(web.ListTables))))
+	mux.Handle("/tables/view", auth.AuthMiddleware(auth.RoleMiddleware("administrator", "waiter")(http.HandlerFunc(web.ViewTable))))
+	mux.Handle("/tables/create", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.CreateTable))))
+	mux.Handle("/tables/edit", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.EditTable))))
+	mux.Handle("/tables/delete", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.DeleteTable))))
 
 	// Logout route
 	mux.HandleFunc("/logout", web.Logout)

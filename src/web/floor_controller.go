@@ -8,14 +8,17 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"sazardev.clean-menu-go/src/auth"
 	"sazardev.clean-menu-go/src/models"
 )
 
 func ListFloors(w http.ResponseWriter, r *http.Request) {
 	data := struct {
-		Floors []models.Floor
+		CurrentUser models.User
+		Floors      []models.Floor
 	}{
-		Floors: models.Floors,
+		CurrentUser: auth.GetCurrentUser(),
+		Floors:      models.Floors,
 	}
 
 	files := []string{
@@ -54,6 +57,12 @@ func CreateFloor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	data := struct {
+		CurrentUser models.User
+	}{
+		CurrentUser: auth.GetCurrentUser(),
+	}
+
 	files := []string{
 		filepath.Join("src", "ui", "pages", "create_floor.tmpl.html"),
 		filepath.Join("src", "ui", "layouts", "layout.tmpl.html"),
@@ -67,7 +76,7 @@ func CreateFloor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", nil)
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Println(err.Error())
 		fmt.Fprintf(w, "Unable to render template")
@@ -100,6 +109,14 @@ func EditFloor(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	data := struct {
+		CurrentUser models.User
+		Floor       models.Floor
+	}{
+		CurrentUser: auth.GetCurrentUser(),
+		Floor:       floor,
+	}
+
 	files := []string{
 		filepath.Join("src", "ui", "pages", "edit_floor.tmpl.html"),
 		filepath.Join("src", "ui", "layouts", "layout.tmpl.html"),
@@ -113,7 +130,7 @@ func EditFloor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", floor)
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Println(err.Error())
 		fmt.Fprintf(w, "Unable to render template")
