@@ -21,9 +21,9 @@ func main() {
 
 	// Menu routes
 	mux.Handle("/menus", auth.AuthMiddleware(auth.RoleMiddleware("administrator", "waiter", "chef")(http.HandlerFunc(web.ListMenus))))
-	mux.Handle("/menus/create", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.CreateMenu))))
-	mux.Handle("/menus/edit", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.EditMenu))))
-	mux.Handle("/menus/delete", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.DeleteMenu))))
+	mux.Handle("/menus/create", auth.AuthMiddleware(auth.RoleMiddleware("administrator", "chef")(http.HandlerFunc(web.CreateMenu))))
+	mux.Handle("/menus/edit", auth.AuthMiddleware(auth.RoleMiddleware("administrator", "chef")(http.HandlerFunc(web.EditMenu))))
+	mux.Handle("/menus/delete", auth.AuthMiddleware(auth.RoleMiddleware("administrator", "chef")(http.HandlerFunc(web.DeleteMenu))))
 
 	// User routes
 	mux.Handle("/users", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.ListUsers))))

@@ -50,11 +50,11 @@ The security will be using JWT for the authentication. The idea is to have a sim
 
 The roadmap for the project is:
 
-- [ ] Create the project structure
+- [ x ] Create the project structure
 - [ ] Create the database structure
-- [ ] Create the owner interface
-- [ ] Create the waiter interface
-- [ ] Create the chef interface
+- [ x ] Create the owner interface
+- [ x ] Create the waiter interface
+- [ x ] Create the chef interface
 - [ ] Create the statistics interface
 - [ ] Create the menu management interface
 - [ ] Create the WebSocket Connection
