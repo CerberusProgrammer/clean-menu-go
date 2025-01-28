@@ -79,20 +79,14 @@ func CreateTable(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		capacity, _ := strconv.Atoi(r.FormValue("capacity"))
-		floorID, _ := strconv.Atoi(r.FormValue("floor_id"))
 		table := models.Table{
-			ID:        len(models.Tables) + 1,
-			Number:    r.FormValue("number"),
-			Name:      r.FormValue("name"),
-			Capacity:  capacity,
-			Shape:     r.FormValue("shape"),
-			IsActive:  r.FormValue("is_active") == "on",
-			Status:    r.FormValue("status"),
-			FloorID:   floorID,
-			XPosition: 0,
-			YPosition: 0,
-			Width:     0,
-			Height:    0,
+			ID:       len(models.Tables) + 1,
+			Number:   r.FormValue("number"),
+			Name:     r.FormValue("name"),
+			Capacity: capacity,
+			Shape:    r.FormValue("shape"),
+			IsActive: r.FormValue("is_active") == "on",
+			Status:   r.FormValue("status"),
 		}
 		models.Tables = append(models.Tables, table)
 		http.Redirect(w, r, "/tables", http.StatusSeeOther)
@@ -125,7 +119,6 @@ func EditTable(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		id, _ := strconv.Atoi(r.FormValue("id"))
 		capacity, _ := strconv.Atoi(r.FormValue("capacity"))
-		floorID, _ := strconv.Atoi(r.FormValue("floor_id"))
 		for i, table := range models.Tables {
 			if table.ID == id {
 				models.Tables[i].Number = r.FormValue("number")
@@ -134,7 +127,6 @@ func EditTable(w http.ResponseWriter, r *http.Request) {
 				models.Tables[i].Shape = r.FormValue("shape")
 				models.Tables[i].IsActive = r.FormValue("is_active") == "on"
 				models.Tables[i].Status = r.FormValue("status")
-				models.Tables[i].FloorID = floorID
 				break
 			}
 		}
