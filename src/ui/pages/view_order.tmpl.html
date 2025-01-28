@@ -1,0 +1,51 @@
+{{define "title"}} View Order {{end}}
+{{define "main"}}
+<div class="container mx-auto px-6 py-8">
+    <h1 class="text-3xl font-bold mb-6">Order Details</h1>
+    <div class="space-y-6">
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Order ID</label>
+            <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">{{.Order.ID}}</p>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Table</label>
+            <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+                <a href="/tables/view?id={{.Order.TableID}}"
+                    class="text-primary hover:text-secondary">{{.Table.Name}}</a>
+            </p>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">User</label>
+            <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">{{.User.Name}}</p>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Status</label>
+            <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">{{.Order.Status}}</p>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Items</label>
+            <ul class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+                {{range .Order.Items}}
+                <li>
+                    <a href="/menus/view?id={{.MenuID}}" class="text-primary hover:text-secondary">{{.MenuName}}</a> -
+                    Quantity: {{.Quantity}}
+                </li>
+                {{end}}
+            </ul>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Created At</label>
+            <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">{{.Order.CreatedAt}}</p>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Updated At</label>
+            <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">{{.Order.UpdatedAt}}</p>
+        </div>
+        <div>
+            <a href="/orders"
+                class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Back
+                to Orders</a>
+        </div>
+    </div>
+</div>
+{{end}}

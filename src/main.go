@@ -44,6 +44,13 @@ func main() {
 	mux.Handle("/tables/edit", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.EditTable))))
 	mux.Handle("/tables/delete", auth.AuthMiddleware(auth.RoleMiddleware("administrator")(http.HandlerFunc(web.DeleteTable))))
 
+	// Order routes
+	mux.Handle("/orders", auth.AuthMiddleware(auth.RoleMiddleware("administrator", "waiter", "chef")(http.HandlerFunc(web.ListOrders))))
+	mux.Handle("/orders/create", auth.AuthMiddleware(auth.RoleMiddleware("administrator", "waiter")(http.HandlerFunc(web.CreateOrder))))
+	mux.Handle("/orders/edit", auth.AuthMiddleware(auth.RoleMiddleware("administrator", "waiter")(http.HandlerFunc(web.EditOrder))))
+	mux.Handle("/orders/delete", auth.AuthMiddleware(auth.RoleMiddleware("administrator", "waiter")(http.HandlerFunc(web.DeleteOrder))))
+	mux.Handle("/orders/view", auth.AuthMiddleware(auth.RoleMiddleware("administrator", "waiter", "chef")(http.HandlerFunc(web.ViewOrder))))
+
 	// Logout route
 	mux.HandleFunc("/logout", web.Logout)
 

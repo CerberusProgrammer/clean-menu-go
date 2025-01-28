@@ -1,0 +1,78 @@
+{{define "title"}} Create Order {{end}}
+{{define "main"}}
+<div class="container mx-auto px-6 py-8">
+    <h1 class="text-3xl font-bold mb-6">Create Order</h1>
+    <form action="/orders/create" method="POST" class="space-y-6">
+        <div>
+            <label for="table_id" class="block text-sm font-medium text-gray-700">Table</label>
+            <select name="table_id" id="table_id" required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                {{range .Tables}}
+                <option value="{{.ID}}">{{.Name}}</option>
+                {{end}}
+            </select>
+        </div>
+        <input type="hidden" name="user_id" value="{{.CurrentUser.ID}}">
+        <div>
+            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+            <select name="status" id="status" required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                <option value="pending">Pending</option>
+                <option value="cooking">Cooking</option>
+                <option value="ready">Ready</option>
+                <option value="served">Served</option>
+                <option value="paid">Paid</option>
+                <option value="canceled">Canceled</option>
+            </select>
+        </div>
+        <div>
+            <label for="items" class="block text-sm font-medium text-gray-700">Items</label>
+            <div id="items-list" class="space-y-4">
+                <div class="flex space-x-2">
+                    <select name="menu_id[]"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                        {{range .Menus}}
+                        <option value="{{.ID}}">{{.Name}}</option>
+                        {{end}}
+                    </select>
+                    <input type="number" name="quantity[]" placeholder="Quantity" required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                    <button type="button" onclick="removeItem(this)"
+                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out">Remove</button>
+                </div>
+            </div>
+            <button type="button" onclick="addItem()"
+                class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Add
+                Item</button>
+        </div>
+        <div>
+            <button type="submit"
+                class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Create</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function addItem() {
+        const itemsList = document.getElementById('items-list');
+        const itemTemplate = `
+            <div class="flex space-x-2">
+                <select name="menu_id[]" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                    {{range .Menus}}
+                    <option value="{{.ID}}">{{.Name}}</option>
+                    {{end}}
+                </select>
+                <input type="number" name="quantity[]" placeholder="Quantity" required
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                <button type="button" onclick="removeItem(this)"
+                    class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out">Remove</button>
+            </div>`;
+        itemsList.insertAdjacentHTML('beforeend', itemTemplate);
+    }
+
+    function removeItem(button) {
+        const item = button.parentElement;
+        item.remove();
+    }
+</script>
+{{end}}

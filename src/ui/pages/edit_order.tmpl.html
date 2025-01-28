@@ -1,0 +1,35 @@
+{{define "title"}} Edit Order {{end}}
+{{define "main"}}
+<div class="container mx-auto px-6 py-8">
+    <h1 class="text-3xl font-bold mb-6">Edit Order</h1>
+    <form action="/orders/edit" method="POST" class="space-y-6">
+        <input type="hidden" name="id" value="{{.Order.ID}}">
+        <div>
+            <label for="table_id" class="block text-sm font-medium text-gray-700">Table ID</label>
+            <input type="text" name="table_id" id="table_id" value="{{.Order.TableID}}" required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+        </div>
+        <div>
+            <label for="user_id" class="block text-sm font-medium text-gray-700">User ID</label>
+            <input type="text" name="user_id" id="user_id" value="{{.Order.UserID}}" required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+        </div>
+        <div>
+            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+            <select name="status" id="status" required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                <option value="pending" {{if eq .Order.Status "pending" }}selected{{end}}>Pending</option>
+                <option value="cooking" {{if eq .Order.Status "cooking" }}selected{{end}}>Cooking</option>
+                <option value="ready" {{if eq .Order.Status "ready" }}selected{{end}}>Ready</option>
+                <option value="served" {{if eq .Order.Status "served" }}selected{{end}}>Served</option>
+                <option value="paid" {{if eq .Order.Status "paid" }}selected{{end}}>Paid</option>
+                <option value="canceled" {{if eq .Order.Status "canceled" }}selected{{end}}>Canceled</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit"
+                class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Update</button>
+        </div>
+    </form>
+</div>
+{{end}}
