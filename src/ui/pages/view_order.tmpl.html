@@ -5,46 +5,43 @@
     <div class="space-y-6">
         <div>
             <label class="block text-sm font-medium text-gray-700">Order ID</label>
-            <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">{{.Order.ID}}</p>
+            <p class="mt-1 text-sm text-gray-900">{{.Order.ID}}</p>
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">Table</label>
-            <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
-                <a href="/tables/view?id={{.Order.TableID}}"
-                    class="text-primary hover:text-secondary">{{.Table.Name}}</a>
-            </p>
+            <p class="mt-1 text-sm text-gray-900">{{.Table.Name}}</p>
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">User</label>
-            <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">{{.User.Name}}</p>
+            <p class="mt-1 text-sm text-gray-900">{{.User.Username}}</p>
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">Status</label>
-            <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">{{.Order.Status}}</p>
+            <p class="mt-1 text-sm text-gray-900">{{.Order.Status}}</p>
         </div>
         <div>
-            <label class="block text-sm font-medium text-gray-700">Items</label>
-            <ul class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
-                {{range .Order.Items}}
-                <li>
-                    <a href="/menus/view?id={{.MenuID}}" class="text-primary hover:text-secondary">{{.MenuName}}</a> -
-                    Quantity: {{.Quantity}}
-                </li>
-                {{end}}
-            </ul>
+            <label class="block text-sm font-medium text-gray-700">Notes</label>
+            <p class="mt-1 text-sm text-gray-900">{{.Order.Notes}}</p>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Payment Method</label>
+            <p class="mt-1 text-sm text-gray-900">{{.Order.PaymentMethod}}</p>
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">Created At</label>
-            <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">{{.Order.CreatedAt}}</p>
+            <p class="mt-1 text-sm text-gray-900">{{.Order.CreatedAt}}</p>
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">Updated At</label>
-            <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">{{.Order.UpdatedAt}}</p>
+            <p class="mt-1 text-sm text-gray-900">{{.Order.UpdatedAt}}</p>
         </div>
         <div>
-            <a href="/orders"
-                class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Back
-                to Orders</a>
+            <label class="block text-sm font-medium text-gray-700">Items</label>
+            <ul class="mt-1 text-sm text-gray-900">
+                {{range .Order.Items}}
+                <li>{{.Quantity}} x {{getMenuName .MenuID}} - ${{.Price}}</li>
+                {{end}}
+            </ul>
         </div>
     </div>
 </div>

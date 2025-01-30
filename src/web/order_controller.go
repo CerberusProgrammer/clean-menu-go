@@ -47,12 +47,14 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		order := models.Order{
-			ID:        len(models.Orders) + 1,
-			TableID:   atoi(r.FormValue("table_id")),
-			UserID:    atoi(r.FormValue("user_id")),
-			Status:    r.FormValue("status"),
-			CreatedAt: time.Now().Format(time.RFC3339),
-			UpdatedAt: time.Now().Format(time.RFC3339),
+			ID:            len(models.Orders) + 1,
+			TableID:       atoi(r.FormValue("table_id")),
+			UserID:        atoi(r.FormValue("user_id")),
+			Status:        r.FormValue("status"),
+			Notes:         r.FormValue("notes"),
+			PaymentMethod: r.FormValue("payment_method"),
+			CreatedAt:     time.Now().Format(time.RFC3339),
+			UpdatedAt:     time.Now().Format(time.RFC3339),
 		}
 
 		for i := range r.Form["menu_id[]"] {
@@ -112,6 +114,8 @@ func EditOrder(w http.ResponseWriter, r *http.Request) {
 				models.Orders[i].TableID = atoi(r.FormValue("table_id"))
 				models.Orders[i].UserID = atoi(r.FormValue("user_id"))
 				models.Orders[i].Status = r.FormValue("status")
+				models.Orders[i].Notes = r.FormValue("notes")
+				models.Orders[i].PaymentMethod = r.FormValue("payment_method")
 				models.Orders[i].UpdatedAt = time.Now().Format(time.RFC3339)
 				break
 			}

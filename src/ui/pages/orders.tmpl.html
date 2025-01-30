@@ -28,6 +28,7 @@
                     <td class="py-2">{{.CreatedAt}}</td>
                     <td class="py-2">{{.UpdatedAt}}</td>
                     <td class="py-2">
+                        <a href="/orders/view?id={{.ID}}" class="text-primary hover:text-secondary">View</a>
                         <a href="/orders/edit?id={{.ID}}" class="text-primary hover:text-secondary">Edit</a>
                         <a href="/orders/delete?id={{.ID}}" class="text-red-500 hover:text-red-700">Delete</a>
                     </td>
