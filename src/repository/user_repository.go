@@ -96,9 +96,26 @@ func (r *UserRepository) GetAllUsers() ([]models.User, error) {
 	var users []models.User
 	for rows.Next() {
 		var user models.User
-		if err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Name, &user.LastName, &user.Email, &user.Phone, &user.Role, &user.Image); err != nil {
+		var username sql.NullString
+		var name sql.NullString
+		var lastName sql.NullString
+		var phone sql.NullString
+		var image sql.NullString
+
+		err := rows.Scan(&user.ID, &username, &user.Password, &name, &lastName, &user.Email, &phone, &user.Role, &image)
+		if err != nil {
 			return nil, err
 		}
+
+		user.Username = username.String
+		if user.Username == "" {
+			user.Username = strings.Split(user.Email, "@")[0]
+		}
+		user.Name = name.String
+		user.LastName = lastName.String
+		user.Phone = phone.String
+		user.Image = image.String
+
 		users = append(users, user)
 	}
 	return users, nil
@@ -106,7 +123,26 @@ func (r *UserRepository) GetAllUsers() ([]models.User, error) {
 
 func (r *UserRepository) GetUserByID(id int) (models.User, error) {
 	var user models.User
+	var username sql.NullString
+	var name sql.NullString
+	var lastName sql.NullString
+	var phone sql.NullString
+	var image sql.NullString
+
 	query := `SELECT id, username, password, name, last_name, email, phone, role, image FROM users WHERE id = $1`
-	err := r.DB.QueryRow(query, id).Scan(&user.ID, &user.Username, &user.Password, &user.Name, &user.LastName, &user.Email, &user.Phone, &user.Role, &user.Image)
-	return user, err
+	err := r.DB.QueryRow(query, id).Scan(&user.ID, &username, &user.Password, &name, &lastName, &user.Email, &phone, &user.Role, &image)
+	if err != nil {
+		return user, err
+	}
+
+	user.Username = username.String
+	if user.Username == "" {
+		user.Username = strings.Split(user.Email, "@")[0]
+	}
+	user.Name = name.String
+	user.LastName = lastName.String
+	user.Phone = phone.String
+	user.Image = image.String
+
+	return user, nil
 }
