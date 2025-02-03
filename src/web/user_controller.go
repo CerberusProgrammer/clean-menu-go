@@ -1,10 +1,10 @@
-// filepath: src/controllers/user_controller.go
 package web
 
 import (
 	"database/sql"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"net/mail"
@@ -118,6 +118,14 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 			defer file.Close()
 			uploadDir := filepath.Join("src", "ui", "static", "uploads")
 
+			// Create the uploads directory if it doesn't exist
+			err = os.MkdirAll(uploadDir, os.ModePerm)
+			if err != nil {
+				log.Println(err.Error())
+				http.Error(w, "Unable to create upload directory", http.StatusInternalServerError)
+				return
+			}
+
 			filePath := filepath.Join(uploadDir, handler.Filename)
 			dst, err := os.Create(filePath)
 			if err != nil {
@@ -126,6 +134,14 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			defer dst.Close()
+
+			// Copy the uploaded file to the destination file
+			_, err = io.Copy(dst, file)
+			if err != nil {
+				log.Println(err.Error())
+				http.Error(w, "Unable to save file", http.StatusInternalServerError)
+				return
+			}
 
 			user.Image = filepath.ToSlash(filepath.Join("uploads", handler.Filename))
 		}
@@ -225,6 +241,14 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 			defer file.Close()
 			uploadDir := filepath.Join("src", "ui", "static", "uploads")
 
+			// Create the uploads directory if it doesn't exist
+			err = os.MkdirAll(uploadDir, os.ModePerm)
+			if err != nil {
+				log.Println(err.Error())
+				http.Error(w, "Unable to create upload directory", http.StatusInternalServerError)
+				return
+			}
+
 			filePath := filepath.Join(uploadDir, handler.Filename)
 			dst, err := os.Create(filePath)
 			if err != nil {
@@ -233,6 +257,14 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			defer dst.Close()
+
+			// Copy the uploaded file to the destination file
+			_, err = io.Copy(dst, file)
+			if err != nil {
+				log.Println(err.Error())
+				http.Error(w, "Unable to save file", http.StatusInternalServerError)
+				return
+			}
 
 			user.Image = filepath.ToSlash(filepath.Join("uploads", handler.Filename))
 		}
