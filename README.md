@@ -63,3 +63,13 @@ The roadmap for the project is:
 - [ ] Create the Docker Compose
 - [ ] Create the tests
 - [ ] Create the documentation
+
+# Database connection
+
+```bash
+# Create the container
+
+
+# Create the database
+docker exec -it pg-docker-clean-menu psql -U postgres -c "CREATE DATABASE clean_menu_db;"
+```

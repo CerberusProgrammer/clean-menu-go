@@ -184,12 +184,11 @@ func ViewOrder(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var user models.User
-	for _, u := range models.Users {
-		if u.ID == order.UserID {
-			user = u
-			break
-		}
+	user, err := userRepository.GetUserByID(order.UserID)
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load user")
+		return
 	}
 
 	data := struct {

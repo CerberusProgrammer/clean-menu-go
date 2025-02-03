@@ -17,5 +17,3 @@ const (
 	WAITER        = "waiter"
 	CHEF          = "chef"
 )
-
-var Users []User

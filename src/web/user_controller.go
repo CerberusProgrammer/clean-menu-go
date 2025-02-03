@@ -1,6 +1,8 @@
+// filepath: src/controllers/user_controller.go
 package web
 
 import (
+	"database/sql"
 	"fmt"
 	"html/template"
 	"log"
@@ -12,7 +14,14 @@ import (
 
 	"sazardev.clean-menu-go/src/auth"
 	"sazardev.clean-menu-go/src/models"
+	"sazardev.clean-menu-go/src/repository"
 )
+
+var userRepository = repository.NewUserRepository(repository.DB)
+
+func InitUserRepository(db *sql.DB) {
+	userRepository = repository.NewUserRepository(db)
+}
 
 type TemplateData struct {
 	CurrentUser models.User
@@ -22,9 +31,16 @@ type TemplateData struct {
 
 func ListUsers(w http.ResponseWriter, r *http.Request) {
 	currentUser := auth.GetCurrentUser()
+	users, err := userRepository.GetAllUsers()
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load users")
+		return
+	}
+
 	data := TemplateData{
 		CurrentUser: currentUser,
-		Users:       models.Users,
+		Users:       users,
 	}
 
 	files := []string{
@@ -67,9 +83,15 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 
 		// Verificar que el correo electrónico no se repita
-		for _, user := range models.Users {
+		users, err := userRepository.GetAllUsers()
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Unable to load users", http.StatusInternalServerError)
+			return
+		}
+		for _, user := range users {
 			if user.Email == email {
-				http.Error(w, "Email already in use", http.StatusBadRequest)
+				http.Error(w, "Email already exists", http.StatusBadRequest)
 				return
 			}
 		}
@@ -82,11 +104,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		}
 
 		user := models.User{
-			ID:       len(models.Users) + 1,
 			Email:    email,
 			Password: password,
 			Username: r.FormValue("username"),
 			Name:     r.FormValue("name"),
+			LastName: r.FormValue("last_name"),
 			Phone:    r.FormValue("phone"),
 			Role:     r.FormValue("role"),
 		}
@@ -95,9 +117,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		if err == nil {
 			defer file.Close()
 			uploadDir := filepath.Join("src", "ui", "static", "uploads")
-			if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
-				os.Mkdir(uploadDir, os.ModePerm)
-			}
+
 			filePath := filepath.Join(uploadDir, handler.Filename)
 			dst, err := os.Create(filePath)
 			if err != nil {
@@ -106,15 +126,17 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			defer dst.Close()
-			if _, err := dst.ReadFrom(file); err != nil {
-				log.Println(err.Error())
-				http.Error(w, "Unable to save file", http.StatusInternalServerError)
-				return
-			}
+
 			user.Image = filepath.ToSlash(filepath.Join("uploads", handler.Filename))
 		}
 
-		models.Users = append(models.Users, user)
+		err = userRepository.CreateUser(user)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Unable to create user", http.StatusInternalServerError)
+			return
+		}
+
 		http.Redirect(w, r, "/users", http.StatusSeeOther)
 		return
 	}
@@ -168,9 +190,15 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 
 		// Verificar que el correo electrónico no se repita
-		for _, user := range models.Users {
+		users, err := userRepository.GetAllUsers()
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Unable to load users", http.StatusInternalServerError)
+			return
+		}
+		for _, user := range users {
 			if user.Email == email && user.ID != id {
-				http.Error(w, "Email already in use", http.StatusBadRequest)
+				http.Error(w, "Email already exists", http.StatusBadRequest)
 				return
 			}
 		}
@@ -182,44 +210,40 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		for i, user := range models.Users {
-			if user.ID == id {
-				models.Users[i].Email = email
-				models.Users[i].Password = password
-				models.Users[i].Username = r.FormValue("username")
-				models.Users[i].Name = r.FormValue("name")
-				models.Users[i].Phone = r.FormValue("phone")
-
-				// Solo el administrador puede cambiar el rol
-				if currentUser.Role == models.ADMINISTRATOR {
-					models.Users[i].Role = r.FormValue("role")
-				}
-
-				file, handler, err := r.FormFile("image")
-				if err == nil {
-					defer file.Close()
-					uploadDir := filepath.Join("src", "ui", "static", "uploads")
-					if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
-						os.Mkdir(uploadDir, os.ModePerm)
-					}
-					filePath := filepath.Join(uploadDir, handler.Filename)
-					dst, err := os.Create(filePath)
-					if err != nil {
-						log.Println(err.Error())
-						http.Error(w, "Unable to save file", http.StatusInternalServerError)
-						return
-					}
-					defer dst.Close()
-					if _, err := dst.ReadFrom(file); err != nil {
-						log.Println(err.Error())
-						http.Error(w, "Unable to save file", http.StatusInternalServerError)
-						return
-					}
-					models.Users[i].Image = filepath.ToSlash(filepath.Join("uploads", handler.Filename))
-				}
-				break
-			}
+		user := models.User{
+			ID:       id,
+			Email:    email,
+			Password: password,
+			Username: r.FormValue("username"),
+			Name:     r.FormValue("name"),
+			Phone:    r.FormValue("phone"),
+			Role:     r.FormValue("role"),
 		}
+
+		file, handler, err := r.FormFile("image")
+		if err == nil {
+			defer file.Close()
+			uploadDir := filepath.Join("src", "ui", "static", "uploads")
+
+			filePath := filepath.Join(uploadDir, handler.Filename)
+			dst, err := os.Create(filePath)
+			if err != nil {
+				log.Println(err.Error())
+				http.Error(w, "Unable to save file", http.StatusInternalServerError)
+				return
+			}
+			defer dst.Close()
+
+			user.Image = filepath.ToSlash(filepath.Join("uploads", handler.Filename))
+		}
+
+		err = userRepository.UpdateUser(user)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Unable to update user", http.StatusInternalServerError)
+			return
+		}
+
 		http.Redirect(w, r, "/users", http.StatusSeeOther)
 		return
 	}
@@ -237,12 +261,11 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user models.User
-	for _, u := range models.Users {
-		if u.ID == id {
-			user = u
-			break
-		}
+	user, err := userRepository.GetUserByID(id)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Unable to load user", http.StatusInternalServerError)
+		return
 	}
 
 	data := TemplateData{
@@ -293,11 +316,11 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for i, user := range models.Users {
-		if user.ID == id {
-			models.Users = append(models.Users[:i], models.Users[i+1:]...)
-			break
-		}
+	err = userRepository.DeleteUser(id)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Unable to delete user", http.StatusInternalServerError)
+		return
 	}
 
 	http.Redirect(w, r, "/users", http.StatusSeeOther)

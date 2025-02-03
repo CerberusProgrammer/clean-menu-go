@@ -5,11 +5,15 @@ import (
 	"net/http"
 
 	"sazardev.clean-menu-go/src/auth"
+	"sazardev.clean-menu-go/src/repository"
 	"sazardev.clean-menu-go/src/web"
 )
 
 func main() {
 	mux := http.NewServeMux()
+	dataSourceName := "user=postgres dbname=clean_menu_db sslmode=disable password=postgres port=5433"
+	repository.InitDB(dataSourceName)
+	web.InitUserRepository(repository.DB)
 
 	// src\ui\static
 	fileserver := http.FileServer(http.Dir("src/ui/static"))
