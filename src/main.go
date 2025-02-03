@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 
@@ -9,10 +10,47 @@ import (
 	"sazardev.clean-menu-go/src/web"
 )
 
+func getDataSourceName() string {
+	userFlag := flag.String("user", "", "User name for the database connection")
+
+	if userFlag != nil {
+		fmt.Println("Error while parsing the user flag")
+	}
+
+	passwordFlag := flag.String("password", "", "Password for the database connection")
+
+	if passwordFlag != nil {
+		fmt.Println("Error while parsing the password flag")
+	}
+
+	dbNameFlag := flag.String("dbname", "", "Database name for the database connection")
+
+	if dbNameFlag != nil {
+		fmt.Println("Error while parsing the dbname flag")
+	}
+
+	port := flag.String("port", "5432", "Port for the database connection")
+
+	if port != nil {
+		fmt.Println("Error while parsing the port flag")
+	}
+
+	if userFlag == nil || passwordFlag == nil || dbNameFlag == nil {
+		fmt.Println("Error while parsing the flags")
+		return ""
+	}
+
+	flag.Parse()
+
+	dataSourceName := fmt.Sprintf("user=%s dbname=%s sslmode=disable password=%s port=%s", *userFlag, *dbNameFlag, *passwordFlag, *port)
+
+	return dataSourceName
+}
+
 func main() {
 	mux := http.NewServeMux()
-	dataSourceName := "user=postgres dbname=clean_menu_db sslmode=disable password=postgres port=5433"
-	repository.InitDB(dataSourceName)
+
+	repository.InitDB(getDataSourceName())
 	web.InitUserRepository(repository.DB)
 
 	// src\ui\static
