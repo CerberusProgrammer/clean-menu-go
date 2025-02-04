@@ -52,6 +52,7 @@ func main() {
 
 	repository.InitDB(getDataSourceName())
 	web.InitUserRepository(repository.DB)
+	web.InitTableRepository(repository.DB)
 
 	// src\ui\static
 	fileserver := http.FileServer(http.Dir("src/ui/static"))

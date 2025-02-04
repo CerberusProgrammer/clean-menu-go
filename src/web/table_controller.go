@@ -1,6 +1,7 @@
 package web
 
 import (
+	"database/sql"
 	"fmt"
 	"html/template"
 	"log"
@@ -10,11 +11,25 @@ import (
 
 	"sazardev.clean-menu-go/src/auth"
 	"sazardev.clean-menu-go/src/models"
+	"sazardev.clean-menu-go/src/repository"
 )
+
+var tableRepository *repository.TableRepository
+
+func InitTableRepository(db *sql.DB) {
+	tableRepository = repository.NewTableRepository(db)
+}
 
 func ListTables(w http.ResponseWriter, r *http.Request) {
 	funcMap := template.FuncMap{
 		"GetColorStatus": models.GetColorStatus,
+	}
+
+	tables, err := tableRepository.GetAllTables()
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load tables")
+		return
 	}
 
 	data := struct {
@@ -22,7 +37,7 @@ func ListTables(w http.ResponseWriter, r *http.Request) {
 		Tables      []models.Table
 	}{
 		CurrentUser: auth.GetCurrentUser(),
-		Tables:      models.Tables,
+		Tables:      tables,
 	}
 
 	files := []string{
@@ -49,12 +64,11 @@ func ListTables(w http.ResponseWriter, r *http.Request) {
 
 func ViewTable(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
-	var table models.Table
-	for _, t := range models.Tables {
-		if t.ID == id {
-			table = t
-			break
-		}
+	table, err := tableRepository.GetTableByID(id)
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load table")
+		return
 	}
 
 	data := struct {
@@ -91,7 +105,6 @@ func CreateTable(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		capacity, _ := strconv.Atoi(r.FormValue("capacity"))
 		table := models.Table{
-			ID:       len(models.Tables) + 1,
 			Number:   r.FormValue("number"),
 			Name:     r.FormValue("name"),
 			Capacity: capacity,
@@ -99,7 +112,12 @@ func CreateTable(w http.ResponseWriter, r *http.Request) {
 			IsActive: r.FormValue("is_active") == "on",
 			Status:   r.FormValue("status"),
 		}
-		models.Tables = append(models.Tables, table)
+		err := tableRepository.CreateTable(table)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Unable to create table", http.StatusInternalServerError)
+			return
+		}
 		http.Redirect(w, r, "/tables", http.StatusSeeOther)
 		return
 	}
@@ -136,28 +154,31 @@ func EditTable(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		id, _ := strconv.Atoi(r.FormValue("id"))
 		capacity, _ := strconv.Atoi(r.FormValue("capacity"))
-		for i, table := range models.Tables {
-			if table.ID == id {
-				models.Tables[i].Number = r.FormValue("number")
-				models.Tables[i].Name = r.FormValue("name")
-				models.Tables[i].Capacity = capacity
-				models.Tables[i].Shape = r.FormValue("shape")
-				models.Tables[i].IsActive = r.FormValue("is_active") == "on"
-				models.Tables[i].Status = r.FormValue("status")
-				break
-			}
+		table := models.Table{
+			ID:       id,
+			Number:   r.FormValue("number"),
+			Name:     r.FormValue("name"),
+			Capacity: capacity,
+			Shape:    r.FormValue("shape"),
+			IsActive: r.FormValue("is_active") == "on",
+			Status:   r.FormValue("status"),
+		}
+		err := tableRepository.UpdateTable(table)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Unable to update table", http.StatusInternalServerError)
+			return
 		}
 		http.Redirect(w, r, "/tables", http.StatusSeeOther)
 		return
 	}
 
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
-	var table models.Table
-	for _, t := range models.Tables {
-		if t.ID == id {
-			table = t
-			break
-		}
+	table, err := tableRepository.GetTableByID(id)
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load table")
+		return
 	}
 
 	data := struct {
@@ -191,11 +212,11 @@ func EditTable(w http.ResponseWriter, r *http.Request) {
 
 func DeleteTable(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
-	for i, table := range models.Tables {
-		if table.ID == id {
-			models.Tables = append(models.Tables[:i], models.Tables[i+1:]...)
-			break
-		}
+	err := tableRepository.DeleteTable(id)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Unable to delete table", http.StatusInternalServerError)
+		return
 	}
 	http.Redirect(w, r, "/tables", http.StatusSeeOther)
 }

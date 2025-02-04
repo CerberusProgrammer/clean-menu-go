@@ -22,10 +22,11 @@ func InitDB(dataSourceName string) {
 
 	log.Println("Database connection established successfully")
 
-	initSchema()
+	initUserSchema()
+	initTableSchema()
 }
 
-func initSchema() {
+func initUserSchema() {
 	query := `
     CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -41,8 +42,28 @@ func initSchema() {
     `
 	_, err := DB.Exec(query)
 	if err != nil {
-		log.Fatalf("Failed to create schema: %v", err)
+		log.Fatalf("Failed to create user schema: %v", err)
 	}
 
-	log.Println("Database schema initialized successfully")
+	log.Println("User table schema initialized successfully")
+}
+
+func initTableSchema() {
+	query := `
+    CREATE TABLE IF NOT EXISTS tables (
+        id SERIAL PRIMARY KEY,
+        number VARCHAR(50) NOT NULL,
+        name VARCHAR(50),
+        capacity INT NOT NULL,
+        shape VARCHAR(20),
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        status VARCHAR(20)
+    );
+    `
+	_, err := DB.Exec(query)
+	if err != nil {
+		log.Fatalf("Failed to create table schema: %v", err)
+	}
+
+	log.Println("Table schema initialized successfully")
 }
