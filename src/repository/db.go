@@ -24,6 +24,7 @@ func InitDB(dataSourceName string) {
 
 	initUserSchema()
 	initTableSchema()
+	initFloorSchema()
 }
 
 func initUserSchema() {
@@ -66,4 +67,22 @@ func initTableSchema() {
 	}
 
 	log.Println("Table schema initialized successfully")
+}
+
+func initFloorSchema() {
+	query := `
+    CREATE TABLE IF NOT EXISTS floors (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(50) NOT NULL,
+        description TEXT,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        "order" INT NOT NULL
+    );
+    `
+	_, err := DB.Exec(query)
+	if err != nil {
+		log.Fatalf("Failed to create floor schema: %v", err)
+	}
+
+	log.Println("Floor schema initialized successfully")
 }
