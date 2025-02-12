@@ -3,43 +3,43 @@
 <div class="container mx-auto px-6 py-8">
     <h1 class="text-3xl font-bold mb-6">Edit Table</h1>
     <form action="/tables/edit" method="POST" class="space-y-6">
-        <input type="hidden" name="id" value="{{.ID}}">
+        <input type="hidden" name="id" value="{{.Table.ID}}">
         <div>
             <label for="number" class="block text-sm font-medium text-gray-700">Number</label>
-            <input type="text" name="number" id="number" value="{{.Number}}" required
+            <input type="text" name="number" id="number" value="{{.Table.Number}}" required
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
         </div>
         <div>
             <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-            <input type="text" name="name" id="name" value="{{.Name}}" required
+            <input type="text" name="name" id="name" value="{{.Table.Name}}" required
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
         </div>
         <div>
             <label for="capacity" class="block text-sm font-medium text-gray-700">Capacity</label>
-            <input type="number" name="capacity" id="capacity" value="{{.Capacity}}" required
+            <input type="number" name="capacity" id="capacity" value="{{.Table.Capacity}}" required
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
         </div>
         <div>
             <label for="shape" class="block text-sm font-medium text-gray-700">Shape</label>
             <select name="shape" id="shape" required
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
-                <option value="circle" {{if eq .Shape "circle" }}selected{{end}}>Circle</option>
-                <option value="square" {{if eq .Shape "square" }}selected{{end}}>Square</option>
-                <option value="rectangle" {{if eq .Shape "rectangle" }}selected{{end}}>Rectangle</option>
+                <option value="circle" {{if eq .Table.Shape "circle" }}selected{{end}}>Circle</option>
+                <option value="square" {{if eq .Table.Shape "square" }}selected{{end}}>Square</option>
+                <option value="rectangle" {{if eq .Table.Shape "rectangle" }}selected{{end}}>Rectangle</option>
             </select>
         </div>
         <div>
             <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
             <select name="status" id="status" required
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
-                <option value="available" {{if eq .Status "available" }}selected{{end}}>Available</option>
-                <option value="occupied" {{if eq .Status "occupied" }}selected{{end}}>Occupied</option>
-                <option value="reserved" {{if eq .Status "reserved" }}selected{{end}}>Reserved</option>
+                <option value="available" {{if eq .Table.Status "available" }}selected{{end}}>Available</option>
+                <option value="occupied" {{if eq .Table.Status "occupied" }}selected{{end}}>Occupied</option>
+                <option value="reserved" {{if eq .Table.Status "reserved" }}selected{{end}}>Reserved</option>
             </select>
         </div>
         <div>
             <label for="is_active" class="block text-sm font-medium text-gray-700">Is Active</label>
-            <input type="checkbox" name="is_active" id="is_active" {{if .IsActive}}checked{{end}}
+            <input type="checkbox" name="is_active" id="is_active" {{if .Table.IsActive}}checked{{end}}
                 class="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
         </div>
         <div>
