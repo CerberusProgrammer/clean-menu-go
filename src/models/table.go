@@ -16,10 +16,9 @@ const (
 	TableStatusAvailable = "available"
 	TableStatusOccupied  = "occupied"
 	TableStatusReserved  = "reserved"
-
-	TableShapeCircle    = "circle"
-	TableShapeSquare    = "square"
-	TableShapeRectangle = "rectangle"
+	TableShapeCircle     = "circle"
+	TableShapeSquare     = "square"
+	TableShapeRectangle  = "rectangle"
 )
 
 func GetColorStatus(status string) string {
