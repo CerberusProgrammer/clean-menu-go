@@ -1,6 +1,7 @@
 package web
 
 import (
+	"database/sql"
 	"fmt"
 	"html/template"
 	"log"
@@ -10,15 +11,29 @@ import (
 
 	"sazardev.clean-menu-go/src/auth"
 	"sazardev.clean-menu-go/src/models"
+	"sazardev.clean-menu-go/src/repository"
 )
 
+var floorRepository *repository.FloorRepository
+
+func InitFloorRepository(db *sql.DB) {
+	floorRepository = repository.NewFloorRepository(db)
+}
+
 func ListFloors(w http.ResponseWriter, r *http.Request) {
+	floors, err := floorRepository.GetAllFloors()
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load floors")
+		return
+	}
+
 	data := struct {
 		CurrentUser models.User
 		Floors      []models.Floor
 	}{
 		CurrentUser: auth.GetCurrentUser(),
-		Floors:      models.Floors,
+		Floors:      floors,
 	}
 
 	files := []string{
@@ -45,14 +60,19 @@ func ListFloors(w http.ResponseWriter, r *http.Request) {
 func CreateFloor(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		r.ParseForm()
+		order, _ := strconv.Atoi(r.FormValue("order"))
 		floor := models.Floor{
-			ID:          len(models.Floors) + 1,
 			Name:        r.FormValue("name"),
 			Description: r.FormValue("description"),
 			IsActive:    r.FormValue("is_active") == "on",
-			Order:       len(models.Floors) + 1,
+			Order:       order,
 		}
-		models.Floors = append(models.Floors, floor)
+		err := floorRepository.CreateFloor(floor)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Unable to create floor", http.StatusInternalServerError)
+			return
+		}
 		http.Redirect(w, r, "/floors", http.StatusSeeOther)
 		return
 	}
@@ -88,25 +108,30 @@ func EditFloor(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		id, _ := strconv.Atoi(r.FormValue("id"))
-		for i, floor := range models.Floors {
-			if floor.ID == id {
-				models.Floors[i].Name = r.FormValue("name")
-				models.Floors[i].Description = r.FormValue("description")
-				models.Floors[i].IsActive = r.FormValue("is_active") == "on"
-				break
-			}
+		order, _ := strconv.Atoi(r.FormValue("order"))
+		floor := models.Floor{
+			ID:          id,
+			Name:        r.FormValue("name"),
+			Description: r.FormValue("description"),
+			IsActive:    r.FormValue("is_active") == "on",
+			Order:       order,
+		}
+		err := floorRepository.UpdateFloor(floor)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Unable to update floor", http.StatusInternalServerError)
+			return
 		}
 		http.Redirect(w, r, "/floors", http.StatusSeeOther)
 		return
 	}
 
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
-	var floor models.Floor
-	for _, f := range models.Floors {
-		if f.ID == id {
-			floor = f
-			break
-		}
+	floor, err := floorRepository.GetFloorByID(id)
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load floor")
+		return
 	}
 
 	data := struct {
@@ -140,11 +165,11 @@ func EditFloor(w http.ResponseWriter, r *http.Request) {
 
 func DeleteFloor(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
-	for i, floor := range models.Floors {
-		if floor.ID == id {
-			models.Floors = append(models.Floors[:i], models.Floors[i+1:]...)
-			break
-		}
+	err := floorRepository.DeleteFloor(id)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Unable to delete floor", http.StatusInternalServerError)
+		return
 	}
 	http.Redirect(w, r, "/floors", http.StatusSeeOther)
 }
