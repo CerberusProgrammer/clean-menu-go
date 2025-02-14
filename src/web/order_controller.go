@@ -1,6 +1,7 @@
 package web
 
 import (
+	"database/sql"
 	"fmt"
 	"html/template"
 	"log"
@@ -11,15 +12,29 @@ import (
 
 	"sazardev.clean-menu-go/src/auth"
 	"sazardev.clean-menu-go/src/models"
+	"sazardev.clean-menu-go/src/repository"
 )
 
+var orderRepository *repository.OrderRepository
+
+func InitOrderRepository(db *sql.DB) {
+	orderRepository = repository.NewOrderRepository(db)
+}
+
 func ListOrders(w http.ResponseWriter, r *http.Request) {
+	orders, err := orderRepository.GetAllOrders()
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load orders")
+		return
+	}
+
 	data := struct {
 		CurrentUser models.User
 		Orders      []models.Order
 	}{
 		CurrentUser: auth.GetCurrentUser(),
-		Orders:      models.Orders,
+		Orders:      orders,
 	}
 
 	files := []string{
@@ -47,7 +62,6 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		order := models.Order{
-			ID:            len(models.Orders) + 1,
 			TableID:       atoi(r.FormValue("table_id")),
 			UserID:        atoi(r.FormValue("user_id")),
 			Status:        r.FormValue("status"),
@@ -59,8 +73,6 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 
 		for i := range r.Form["menu_id[]"] {
 			orderItem := models.OrderItem{
-				ID:        len(models.Orders) + 1,
-				OrderID:   order.ID,
 				MenuID:    atoi(r.Form["menu_id[]"][i]),
 				Quantity:  atoi(r.Form["quantity[]"][i]),
 				Price:     getMenuPrice(atoi(r.Form["menu_id[]"][i])),
@@ -69,8 +81,27 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 			order.Items = append(order.Items, orderItem)
 		}
 
-		models.Orders = append(models.Orders, order)
+		_, err := orderRepository.CreateOrder(order)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Unable to create order", http.StatusInternalServerError)
+			return
+		}
 		http.Redirect(w, r, "/orders", http.StatusSeeOther)
+		return
+	}
+
+	tables, err := tableRepository.GetAllTables()
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Unable to load tables", http.StatusInternalServerError)
+		return
+	}
+
+	menus, err := menuRepository.GetAllMenus()
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Unable to load menus", http.StatusInternalServerError)
 		return
 	}
 
@@ -80,8 +111,8 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		Menus       []models.Menu
 	}{
 		CurrentUser: auth.GetCurrentUser(),
-		Tables:      models.Tables,
-		Menus:       models.Menus,
+		Tables:      tables,
+		Menus:       menus,
 	}
 
 	files := []string{
@@ -109,28 +140,36 @@ func EditOrder(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		id, _ := strconv.Atoi(r.FormValue("id"))
-		for i, order := range models.Orders {
-			if order.ID == id {
-				models.Orders[i].TableID = atoi(r.FormValue("table_id"))
-				models.Orders[i].UserID = atoi(r.FormValue("user_id"))
-				models.Orders[i].Status = r.FormValue("status")
-				models.Orders[i].Notes = r.FormValue("notes")
-				models.Orders[i].PaymentMethod = r.FormValue("payment_method")
-				models.Orders[i].UpdatedAt = time.Now().Format(time.RFC3339)
-				break
-			}
+		order, err := orderRepository.GetOrderByID(id)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Unable to load order", http.StatusInternalServerError)
+			return
+		}
+
+		order.TableID = atoi(r.FormValue("table_id"))
+		order.UserID = atoi(r.FormValue("user_id"))
+		order.Status = r.FormValue("status")
+		order.Notes = r.FormValue("notes")
+		order.PaymentMethod = r.FormValue("payment_method")
+		order.UpdatedAt = time.Now().Format(time.RFC3339)
+
+		err = orderRepository.UpdateOrder(order)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Unable to update order", http.StatusInternalServerError)
+			return
 		}
 		http.Redirect(w, r, "/orders", http.StatusSeeOther)
 		return
 	}
 
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
-	var order models.Order
-	for _, o := range models.Orders {
-		if o.ID == id {
-			order = o
-			break
-		}
+	order, err := orderRepository.GetOrderByID(id)
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load order")
+		return
 	}
 
 	data := struct {
@@ -168,12 +207,11 @@ func EditOrder(w http.ResponseWriter, r *http.Request) {
 
 func ViewOrder(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
-	var order models.Order
-	for _, o := range models.Orders {
-		if o.ID == id {
-			order = o
-			break
-		}
+	order, err := orderRepository.GetOrderByID(id)
+	if err != nil {
+		log.Println(err.Error())
+		fmt.Fprintf(w, "Unable to load order")
+		return
 	}
 
 	var table models.Table
@@ -226,11 +264,11 @@ func ViewOrder(w http.ResponseWriter, r *http.Request) {
 
 func DeleteOrder(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
-	for i, order := range models.Orders {
-		if order.ID == id {
-			models.Orders = append(models.Orders[:i], models.Orders[i+1:]...)
-			break
-		}
+	err := orderRepository.DeleteOrder(id)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Unable to delete order", http.StatusInternalServerError)
+		return
 	}
 	http.Redirect(w, r, "/orders", http.StatusSeeOther)
 }
