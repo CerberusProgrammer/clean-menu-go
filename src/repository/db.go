@@ -25,6 +25,7 @@ func InitDB(dataSourceName string) {
 	initUserSchema()
 	initTableSchema()
 	initFloorSchema()
+	initMenuSchema() // Add this line
 }
 
 func initUserSchema() {
@@ -85,4 +86,30 @@ func initFloorSchema() {
 	}
 
 	log.Println("Floor schema initialized successfully")
+}
+
+func initMenuSchema() {
+	query := `
+    CREATE TABLE IF NOT EXISTS menus (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        price FLOAT NOT NULL,
+        recipe TEXT,
+        categories TEXT[],
+        image VARCHAR(255),
+        description TEXT,
+        availability BOOLEAN NOT NULL DEFAULT FALSE,
+        estimated_time INT,
+        ingredients TEXT[],
+        created_by INT REFERENCES users(id),
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL
+    );
+    `
+	_, err := DB.Exec(query)
+	if err != nil {
+		log.Fatalf("Failed to create menu schema: %v", err)
+	}
+
+	log.Println("Menu schema initialized successfully")
 }
