@@ -29,6 +29,10 @@ func ListOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	funcMap := template.FuncMap{
+		"formatDate": formatDate,
+	}
+
 	data := struct {
 		CurrentUser models.User
 		Orders      []models.Order
@@ -43,7 +47,7 @@ func ListOrders(w http.ResponseWriter, r *http.Request) {
 		filepath.Join("src", "ui", "components", "nav.component.html"),
 	}
 
-	ts, err := template.ParseFiles(files...)
+	ts, err := template.New("base").Funcs(funcMap).ParseFiles(files...)
 	if err != nil {
 		log.Println(err.Error())
 		fmt.Fprintf(w, "Unable to load template")
@@ -56,6 +60,14 @@ func ListOrders(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Unable to render template")
 		return
 	}
+}
+
+func formatDate(dateStr string) string {
+	date, err := time.Parse(time.RFC3339, dateStr)
+	if err != nil {
+		return dateStr
+	}
+	return date.Format("2006/01/02 15:04")
 }
 
 func CreateOrder(w http.ResponseWriter, r *http.Request) {
@@ -229,6 +241,10 @@ func ViewOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	funcMap := template.FuncMap{
+		"getMenuName": getMenuName,
+	}
+
 	data := struct {
 		CurrentUser models.User
 		Order       models.Order
@@ -247,7 +263,7 @@ func ViewOrder(w http.ResponseWriter, r *http.Request) {
 		filepath.Join("src", "ui", "components", "nav.component.html"),
 	}
 
-	ts, err := template.ParseFiles(files...)
+	ts, err := template.New("base").Funcs(funcMap).ParseFiles(files...)
 	if err != nil {
 		log.Println(err.Error())
 		fmt.Fprintf(w, "Unable to load template")
@@ -285,4 +301,13 @@ func getMenuPrice(menuID int) float64 {
 		}
 	}
 	return 0
+}
+
+func getMenuName(menuID int) string {
+	for _, menu := range models.Menus {
+		if menu.ID == menuID {
+			return menu.Name
+		}
+	}
+	return ""
 }
