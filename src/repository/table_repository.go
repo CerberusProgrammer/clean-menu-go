@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 
 	"sazardev.clean-menu-go/src/models"
 )
@@ -18,9 +17,6 @@ func NewTableRepository(db *sql.DB) *TableRepository {
 func (r *TableRepository) CreateTable(table models.Table) error {
 	query := `INSERT INTO tables (number, name, capacity, shape, is_active, status) VALUES ($1, $2, $3, $4, $5, $6)`
 	_, err := r.DB.Exec(query, table.Number, table.Name, table.Capacity, table.Shape, table.IsActive, table.Status)
-	if err != nil {
-		fmt.Println("Error executing query: ", err)
-	}
 	return err
 }
 
