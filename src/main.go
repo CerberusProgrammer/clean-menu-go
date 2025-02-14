@@ -55,6 +55,7 @@ func main() {
 	web.InitTableRepository(repository.DB)
 	web.InitFloorRepository(repository.DB)
 	web.InitMenuRepository(repository.DB)
+	web.InitOrderRepository(repository.DB)
 
 	// src\ui\static
 	fileserver := http.FileServer(http.Dir("src/ui/static"))
