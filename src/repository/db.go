@@ -25,7 +25,8 @@ func InitDB(dataSourceName string) {
 	initUserSchema()
 	initTableSchema()
 	initFloorSchema()
-	initMenuSchema() // Add this line
+	initMenuSchema()
+	initOrderSchema()
 }
 
 func initUserSchema() {
@@ -112,4 +113,36 @@ func initMenuSchema() {
 	}
 
 	log.Println("Menu schema initialized successfully")
+}
+
+func initOrderSchema() {
+	query := `
+    CREATE TABLE IF NOT EXISTS orders (
+        id SERIAL PRIMARY KEY,
+        table_id INT REFERENCES tables(id),
+        user_id INT REFERENCES users(id),
+        status VARCHAR(20),
+        notes TEXT,
+        payment_method VARCHAR(20),
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL,
+        total_amount FLOAT,
+        discount FLOAT,
+        tax FLOAT
+    );
+    CREATE TABLE IF NOT EXISTS order_items (
+        id SERIAL PRIMARY KEY,
+        order_id INT REFERENCES orders(id),
+        menu_id INT REFERENCES menus(id),
+        quantity INT,
+        price FLOAT,
+        created_at TIMESTAMP NOT NULL
+    );
+    `
+	_, err := DB.Exec(query)
+	if err != nil {
+		log.Fatalf("Failed to create order schema: %v", err)
+	}
+
+	log.Println("Order schema initialized successfully")
 }
