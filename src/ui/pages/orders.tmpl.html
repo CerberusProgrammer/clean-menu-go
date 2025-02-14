@@ -25,8 +25,8 @@
                     <td class="py-2">{{.TableID}}</td>
                     <td class="py-2">{{.UserID}}</td>
                     <td class="py-2">{{.Status}}</td>
-                    <td class="py-2">{{.CreatedAt}}</td>
-                    <td class="py-2">{{.UpdatedAt}}</td>
+                    <td class="py-2">{{formatDate .CreatedAt}}</td>
+                    <td class="py-2">{{formatDate .UpdatedAt}}</td>
                     <td class="py-2">
                         <a href="/orders/view?id={{.ID}}" class="text-primary hover:text-secondary">View</a>
                         <a href="/orders/edit?id={{.ID}}" class="text-primary hover:text-secondary">Edit</a>
