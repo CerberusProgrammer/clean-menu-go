@@ -5,9 +5,13 @@
     <form action="/orders/edit" method="POST" class="space-y-6">
         <input type="hidden" name="id" value="{{.Order.ID}}">
         <div>
-            <label for="table_id" class="block text-sm font-medium text-gray-700">Table ID</label>
-            <input type="text" name="table_id" id="table_id" value="{{.Order.TableID}}" required
+            <label for="table_id" class="block text-sm font-medium text-gray-700">Table</label>
+            <select name="table_id" id="table_id" required
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                {{range .Tables}}
+                <option value="{{.ID}}" {{if eq .ID $.Order.TableID}}selected{{end}}>{{.Name}}</option>
+                {{end}}
+            </select>
         </div>
         <div>
             <label for="user_id" class="block text-sm font-medium text-gray-700">User ID</label>
@@ -41,9 +45,53 @@
             </select>
         </div>
         <div>
+            <label for="items" class="block text-sm font-medium text-gray-700">Items</label>
+            <div id="items-list" class="space-y-4">
+                {{range .Order.Items}}
+                <div class="flex space-x-2">
+                    <select name="menu_id[]"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                        {{range $.Menus}}
+                        <option value="{{.ID}}" {{if eq .ID $.MenuID}}selected{{end}}>{{.Name}}</option>
+                        {{end}}
+                    </select>
+                    <input type="number" name="quantity[]" value="{{.Quantity}}" placeholder="Quantity" required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                    <button type="button" onclick="removeItem(this)"
+                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out">Remove</button>
+                </div>
+                {{end}}
+            </div>
+            <button type="button" onclick="addItem()"
+                class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Add
+                Item</button>
+        </div>
+        <div>
             <button type="submit"
                 class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ease-in-out">Update</button>
         </div>
     </form>
 </div>
+<script>
+    function addItem() {
+        const itemsList = document.getElementById('items-list');
+        const itemTemplate = `
+            <div class="flex space-x-2">
+                <select name="menu_id[]" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                    {{range .Menus}}
+                    <option value="{{.ID}}">{{.Name}}</option>
+                    {{end}}
+                </select>
+                <input type="number" name="quantity[]" placeholder="Quantity" required
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                <button type="button" onclick="removeItem(this)"
+                    class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out">Remove</button>
+            </div>`;
+        itemsList.insertAdjacentHTML('beforeend', itemTemplate);
+    }
+
+    function removeItem(button) {
+        button.parentElement.remove();
+    }
+</script>
 {{end}}
