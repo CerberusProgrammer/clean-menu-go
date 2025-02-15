@@ -4,6 +4,12 @@ Clean Menu borns with a simple idea: fast attention at a low level for a restaur
 
 There will be three roles in the system: waiter, chef and owner. The waiter will be able to see the orders and mark them as done. The chef will be able to see the orders and mark them as done. The owner will be able to see the orders, mark them as done, see the statistics and manage the menu.
 
+# Usage 
+
+```bash
+$ go run src/main.go --user postgres --password postgres --dbname clean_menu_db --port 5433
+```
+
 # MVP
 
 The ideal flow work for the MVP is:
