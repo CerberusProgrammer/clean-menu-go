@@ -166,6 +166,17 @@ func EditOrder(w http.ResponseWriter, r *http.Request) {
 		order.PaymentMethod = r.FormValue("payment_method")
 		order.UpdatedAt = time.Now().Format(time.RFC3339)
 
+		order.Items = []models.OrderItem{}
+		for i := range r.Form["menu_id[]"] {
+			orderItem := models.OrderItem{
+				MenuID:    atoi(r.Form["menu_id[]"][i]),
+				Quantity:  atoi(r.Form["quantity[]"][i]),
+				Price:     getMenuPrice(atoi(r.Form["menu_id[]"][i])),
+				CreatedAt: time.Now().Format(time.RFC3339),
+			}
+			order.Items = append(order.Items, orderItem)
+		}
+
 		err = orderRepository.UpdateOrder(order)
 		if err != nil {
 			log.Println(err.Error())
@@ -184,6 +195,20 @@ func EditOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tables, err := tableRepository.GetAllTables()
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Unable to load tables", http.StatusInternalServerError)
+		return
+	}
+
+	menus, err := menuRepository.GetAllMenus()
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Unable to load menus", http.StatusInternalServerError)
+		return
+	}
+
 	data := struct {
 		CurrentUser models.User
 		Order       models.Order
@@ -192,8 +217,8 @@ func EditOrder(w http.ResponseWriter, r *http.Request) {
 	}{
 		CurrentUser: auth.GetCurrentUser(),
 		Order:       order,
-		Tables:      models.Tables,
-		Menus:       models.Menus,
+		Tables:      tables,
+		Menus:       menus,
 	}
 
 	files := []string{
