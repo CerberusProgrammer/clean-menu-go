@@ -46,8 +46,16 @@ func (r *OrderRepository) UpdateOrder(order models.Order) error {
 }
 
 func (r *OrderRepository) DeleteOrder(id int) error {
-	query := `DELETE FROM orders WHERE id = $1`
+	// Eliminar los order_items asociados
+	query := `DELETE FROM order_items WHERE order_id = $1`
 	_, err := r.DB.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	// Eliminar la orden
+	query = `DELETE FROM orders WHERE id = $1`
+	_, err = r.DB.Exec(query, id)
 	return err
 }
 
